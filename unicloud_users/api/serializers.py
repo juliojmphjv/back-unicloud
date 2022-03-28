@@ -3,6 +3,8 @@ from unicloud_users.models import UserProfile
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework import serializers
+from ..menu import menu
 
 class UserProfileSerializer(ModelSerializer):
     class Meta:
@@ -28,5 +30,10 @@ class LoginTokenSerializer(TokenObtainPairSerializer):
         token['is_staff'] = user.is_staff
         token['email'] = user.email
         # ...
-        print(token)
         return token
+
+class MenuSerializer(serializers.Serializer):
+    def __init__(self):
+        self.menu = menu
+    def serialize_menu(self):
+        return menu
