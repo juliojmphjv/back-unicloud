@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 class UserProfile(models.Model):
     phone = models.CharField(max_length=25)
-    addrees = models.CharField(max_length=250)
+    address = models.CharField(max_length=250)
     city = models.CharField(max_length=150)
     state = models.CharField(max_length=150)
     country = models.CharField(max_length=150)
