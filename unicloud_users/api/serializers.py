@@ -6,16 +6,27 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from ..menu import menu
 
+
 class UserProfileSerializer(ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ('phone', 'addrees', 'city', 'state', 'country', 'user_id')
+        fields = ('phone', 'address', 'city', 'state', 'country', 'user_id')
 
-class UserSerializer(ModelSerializer):
+
+class UserListSerializer(ModelSerializer):
     userprofile = UserProfileSerializer()
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'userprofile', 'last_login', 'date_joined')
+        fields = (
+        'id', 'username', 'email', 'first_name', 'last_name', 'is_active', 'last_login', 'date_joined', 'userprofile')
+
+    def create(self, validated_data):
+        userprofile = validated_data.pop('userprofile')
+        user = User.objects.create_user(**validated_data)
+        profile = UserProfile(**userprofile, user_id=user.id)
+        UserProfile.save(profile)
+        return user
 
 class LoginTokenSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -37,3 +48,4 @@ class MenuSerializer(serializers.Serializer):
         self.menu = menu
     def serialize_menu(self):
         return menu
+
