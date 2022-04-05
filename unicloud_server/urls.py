@@ -21,11 +21,12 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView
 )
 from rest_framework import routers
-from unicloud_users.api.viewsets import GetUserProfile, MyTokenObtainPairView, GetMenu, GetUserlist
+from unicloud_users.api.viewsets import MyTokenObtainPairView, GetMenu, Users
 
 router = routers.DefaultRouter()
-router.register(r'user-profile', GetUserProfile)
-router.register(r'user-list', GetUserlist)
+router.register(r'users', Users)
+
+
 
 urlpatterns = [
     path('', include(router.urls)),
