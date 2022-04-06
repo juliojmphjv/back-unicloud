@@ -16,7 +16,7 @@ from rest_framework.response import Response
 #         return super().get_queryset().filter(id=self.request.user.id)
 
 class Users(ModelViewSet):
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     queryset = User.objects.all()
     serializer_class = UserListSerializer
 

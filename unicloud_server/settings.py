@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'unicloud_users',
     'rest_framework',
+    'unicloud_customers',
 
 ]
 
