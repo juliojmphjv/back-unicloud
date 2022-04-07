@@ -21,7 +21,7 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView
 )
 from rest_framework import routers
-from unicloud_users.api.viewsets import MyTokenObtainPairView, GetMenu, Users
+from unicloud_users.api.viewsets import MyTokenObtainPairView, GetMenu, Users, RegisterViewSet
 from unicloud_customers.api.viewset import InvitedUserViewSet, CustomerViewSet, OneCustomerViewSet, TokenViewSet
 
 router = routers.DefaultRouter()
@@ -37,7 +37,8 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('menu/', GetMenu.as_view(), name='menu'),
     path('invited-user/', InvitedUserViewSet.as_view({'post': 'create'}), name='invited-user'),
-    path('token/', TokenViewSet.as_view({'post': 'create'}), name='token'),
+    path('token/', TokenViewSet.as_view({'post': 'check_token'}), name='token'),
     path('customers/', CustomerViewSet.as_view({'post': 'create', 'get': 'list'}), name='customers'),
-    path('one-customer/<int:pk>/', OneCustomerViewSet.as_view({'patch': 'partial_update'}))
+    path('one-customer/<int:pk>/', OneCustomerViewSet.as_view({'patch': 'partial_update'})),
+    path('register/', RegisterViewSet.as_view({'post': 'create'}))
 ]

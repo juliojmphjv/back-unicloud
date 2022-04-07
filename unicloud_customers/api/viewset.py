@@ -25,11 +25,11 @@ class InvitedUserViewSet(viewsets.ViewSet):
 
 class TokenViewSet(viewsets.ViewSet):
 
-    def create(self, request):
+    def check_token(self, request):
         token = InvitedUser.objects.filter(token=request.data['token']).exists()
         if token:
             token_data = InvitedUser.objects.get(token=request.data['token'])
-            serializer = InvitedUserSerializer({'token':token_data.token, 'email':token_data.email, 'razao_social':token_data.customer.razao_social, 'is_valid':True})
+            serializer = InvitedUserSerializer({'id':token_data.id, 'token':token_data.token, 'email':token_data.email, 'razao_social':token_data.customer.razao_social, 'is_valid':True})
             return Response(serializer.data)
 
         serializer = InvalidTokenSerializer({'is_valid':False})

@@ -3,6 +3,7 @@ from ..models import InvitedUser
 from rest_framework.fields import CurrentUserDefault
 
 class InvitedUserSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     token = serializers.CharField(max_length=500)
     email = serializers.EmailField()
     razao_social = serializers.CharField()

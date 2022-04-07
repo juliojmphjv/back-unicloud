@@ -29,7 +29,7 @@ class CustomerRelationship(models.Model):
     partner = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='partner')
 
 class InvitedUser(models.Model):
-    email = models.EmailField(primary_key=True)
+    email = models.EmailField(primary_key=False)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     token = models.CharField(max_length=1000, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

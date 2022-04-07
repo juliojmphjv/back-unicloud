@@ -49,3 +49,8 @@ class MenuSerializer(serializers.Serializer):
     def serialize_menu(self):
         return menu
 
+class UserSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    username = serializers.CharField(max_length=50)
+    first_name = serializers.CharField(max_length=150)
+    last_name = serializers.CharField(max_length=150)
