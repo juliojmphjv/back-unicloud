@@ -5,7 +5,7 @@ menu = [
   {
     'icon': "growth-fill",
     'text': "Clientes",
-    'link': "/",
+    'link': "/customers/",
   },
   {
     'icon': "tile-thumb-fill",
