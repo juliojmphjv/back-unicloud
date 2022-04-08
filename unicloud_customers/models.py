@@ -20,16 +20,27 @@ class Customer(models.Model):
     type = models.CharField(max_length=50)
     is_active = models.BooleanField(null=True, default=True, auto_created=True)
 
+    def __str__(self):
+        return self.razao_social
+
 class UserCustomer(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    def __str__(self):
+        return f'{self.user} - {self.customer}'
 
 class CustomerRelationship(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='customer')
     partner = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='partner')
+
+    def __str__(self):
+        return f'{self.customer} is a customer of {self.partner}'
 
 class InvitedUser(models.Model):
     email = models.EmailField(primary_key=False)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     token = models.CharField(max_length=1000, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.email} invitation from {self.customer}'

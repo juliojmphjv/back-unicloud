@@ -4,35 +4,11 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
-from ..menu import menu
-
-
-class UserProfileSerializer(ModelSerializer):
-    class Meta:
-        model = UserProfile
-        fields = ('phone', 'address', 'city', 'state', 'country', 'user_id')
-
-
-class UserListSerializer(ModelSerializer):
-    userprofile = UserProfileSerializer()
-
-    class Meta:
-        model = User
-        fields = (
-        'id', 'username', 'email', 'first_name', 'last_name', 'is_active', 'last_login', 'date_joined', 'userprofile')
-
-    def create(self, validated_data):
-        userprofile = validated_data.pop('userprofile')
-        user = User.objects.create_user(**validated_data)
-        profile = UserProfile(**userprofile, user_id=user.id)
-        UserProfile.save(profile)
-        return user
 
 class LoginTokenSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-
         # Add custom claims
         token['username'] = user.username
         token['first_name'] = user.first_name
@@ -44,13 +20,39 @@ class LoginTokenSerializer(TokenObtainPairSerializer):
         return token
 
 class MenuSerializer(serializers.Serializer):
-    def __init__(self):
-        self.menu = menu
-    def serialize_menu(self):
-        return menu
+    menu = serializers.JSONField()
 
 class UserSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     username = serializers.CharField(max_length=50)
     first_name = serializers.CharField(max_length=150)
     last_name = serializers.CharField(max_length=150)
+
+class UserProfileSerializer(serializers.Serializer):
+    phone = serializers.CharField(max_length=25)
+    address = serializers.CharField(max_length=250)
+    city = serializers.CharField(max_length=150)
+    state = serializers.CharField(max_length=150)
+    country = serializers.CharField(max_length=150)
+
+class UserListSerializer(serializers.Serializer):
+    userprofile = UserProfileSerializer(required=True)
+    username = serializers.EmailField()
+    first_name = serializers.CharField(max_length=150)
+    last_name = serializers.CharField(max_length=150)
+    email = serializers.EmailField()
+    is_active = serializers.BooleanField()
+
+class InvitedUserListSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    created_at = serializers.DateTimeField()
+
+class InvitedUserSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    token = serializers.CharField(max_length=500)
+    email = serializers.EmailField()
+    razao_social = serializers.CharField()
+    is_valid = serializers.BooleanField()
+
+class InvalidTokenSerializer(serializers.Serializer):
+    is_valid = serializers.BooleanField()

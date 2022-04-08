@@ -1,4 +1,4 @@
-menu = [
+admin_menu = [
   {
     'heading': "Administração",
   },
@@ -17,22 +17,16 @@ menu = [
     'text': "Monitoramento",
     'link': "/monitor",
   },
+]
+
+customer_menu = [
 {
-    'heading': "Usuários2",
+    'heading': "Time de usuários",
   },
   {
     'icon': "users-fill",
     'text': "Usuários",
-    'active': False,
-    'subMenu': [
-      {
-        'text': "Usuários3",
-        'link': "/user-list-default",
-      },
-      {
-        'text': "Permissões",
-        'link': "/project-list",
-      },
-    ],
+    'link': "/user-list-default",
+
   },
 ]

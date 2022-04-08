@@ -2,15 +2,7 @@ from rest_framework import serializers
 from ..models import InvitedUser
 from rest_framework.fields import CurrentUserDefault
 
-class InvitedUserSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    token = serializers.CharField(max_length=500)
-    email = serializers.EmailField()
-    razao_social = serializers.CharField()
-    is_valid = serializers.BooleanField()
 
-class InvalidTokenSerializer(serializers.Serializer):
-    is_valid = serializers.BooleanField()
 
 class CustomerSerializer(serializers.Serializer):
      id = serializers.IntegerField()
