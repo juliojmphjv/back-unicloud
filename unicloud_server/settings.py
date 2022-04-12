@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-bum+irc*n@o64v4pgs5pqwpj)l0^!sf7m^i90u#)r1bgv&0+=d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -199,7 +199,8 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "*"
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
 APIKEY_MAILGUN = os.getenv('API_MAILGUN')
