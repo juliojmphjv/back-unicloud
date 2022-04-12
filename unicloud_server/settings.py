@@ -81,16 +81,28 @@ WSGI_APPLICATION = 'unicloud_server.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'unicloud',
-        'USER': 'postgres',
-        'PASSWORD': 'F3lipe@Collision',
-        'HOST': 'localhost',
-        'PORT': '5432',
+if os.getenv("Djangoenv") == True:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'unicloud',
+            'USER': 'postgres',
+            'PASSWORD': 'F3lipe@Collision',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'unicloud',
+            'USER': 'unicloud_root',
+            'PASSWORD': 'Un1Cl0udS3curityP@ss',
+            'HOST': 'uniclou-db.postgres.database.azure.com',
+            'PORT': '5432',
+        }
+    }
 
 
 # Password validation
