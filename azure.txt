@@ -1,0 +1,15 @@
+{
+  "connectionString": "postgresql://wistfulchowder4:YkrDYqExLrtNig1w7a0t1w@server526667428.postgres.database.azure.com/postgres?sslmode=require",
+  "databaseName": "flexibleserverdb",
+  "firewallName": "FirewallIPAddress_2022-4-12_11-27-3",
+  "host": "server526667428.postgres.database.azure.com",
+  "id": "/subscriptions/7f2b1328-7fd6-4e99-ace4-c07ea79608e1/resourceGroups/myresourcegroup/providers/Microsoft.DBforPostgreSQL/flexibleServers/server526667428",
+  "location": "West US 2",
+  "password": "YkrDYqExLrtNig1w7a0t1w",
+  "resourceGroup": "myresourcegroup",
+  "skuname": "Standard_D2s_v3",
+  "username": "wistfulchowder4",
+  "version": "13"
+}
+
+Un1Cl0udS3curityP@ss
