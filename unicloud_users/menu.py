@@ -1,11 +1,16 @@
-menu = [
+admin_menu = [
   {
     'heading': "Administração",
   },
   {
     'icon': "growth-fill",
     'text': "Clientes",
-    'link': "/",
+    'link': "/customers/",
+  },
+  {
+    'icon': "growth-fill",
+    'text': "Clientes",
+    'link': "/customers/",
   },
   {
     'icon': "tile-thumb-fill",
@@ -17,22 +22,16 @@ menu = [
     'text': "Monitoramento",
     'link': "/monitor",
   },
+]
+
+customer_menu = [
 {
-    'heading': "Usuários2",
+    'heading': "Time de usuários",
   },
   {
     'icon': "users-fill",
     'text': "Usuários",
-    'active': False,
-    'subMenu': [
-      {
-        'text': "Usuários3",
-        'link': "/user-list-default",
-      },
-      {
-        'text': "Permissões",
-        'link': "/project-list",
-      },
-    ],
+    'link': "/user-list-default",
+
   },
 ]

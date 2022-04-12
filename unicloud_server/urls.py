@@ -21,11 +21,11 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView
 )
 from rest_framework import routers
-from unicloud_users.api.viewsets import MyTokenObtainPairView, GetMenu, Users
-from unicloud_customers.api.viewset import InvitedUserViewSet, CustomerViewSet
+from unicloud_users.api.viewsets import MyTokenObtainPairView, UsersViewSet, RegisterViewSet, MenuViewSet, InvitedUsersViewSet, TokenViewSet
+from unicloud_customers.api.viewset import CustomerViewSet, OneCustomerViewSet, CustomerType
 
 router = routers.DefaultRouter()
-router.register(r'users', Users)
+# router.register(r'users', Users)
 # router.register(r'invited-user', InvitedUserViewSet)
 
 
@@ -35,7 +35,12 @@ urlpatterns = [
     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path('menu/', GetMenu.as_view(), name='menu'),
-    path('invited-user/', InvitedUserViewSet.as_view({'post': 'create'}), name='invited-user'),
-    path('customer/', CustomerViewSet.as_view({'post': 'create'}), name='customer'),
+    path('invited-user/', InvitedUsersViewSet.as_view({'post': 'create', 'get':'retrieve'}), name='invited-user'),
+    path('token/', TokenViewSet.as_view({'post': 'check_token'}), name='token'),
+    path('customers/', CustomerViewSet.as_view({'post': 'create', 'get': 'list'}), name='customers'),
+    path('one-customer/<int:pk>/', OneCustomerViewSet.as_view({'patch': 'partial_update'})),
+    path('register/', RegisterViewSet.as_view({'post': 'create'})),
+    path('menu/', MenuViewSet.as_view({'get': 'retrieve'})),
+    path('users/', UsersViewSet.as_view({'get': 'retrieve', 'post':'create'})),
+    path('customer-type/', CustomerType.as_view({'get': 'get_type'}))
 ]
