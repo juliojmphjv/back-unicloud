@@ -20,3 +20,6 @@ class CustomerSerializer(serializers.Serializer):
      cnpj = serializers.CharField(max_length=25)
      type = serializers.CharField(max_length=50)
      is_active = serializers.BooleanField()
+
+class CustomerTypeSerializer(serializers.Serializer):
+     type = serializers.CharField(max_length=15)

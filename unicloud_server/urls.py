@@ -22,7 +22,7 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework import routers
 from unicloud_users.api.viewsets import MyTokenObtainPairView, UsersViewSet, RegisterViewSet, MenuViewSet, InvitedUsersViewSet, TokenViewSet
-from unicloud_customers.api.viewset import CustomerViewSet, OneCustomerViewSet
+from unicloud_customers.api.viewset import CustomerViewSet, OneCustomerViewSet, CustomerType
 
 router = routers.DefaultRouter()
 # router.register(r'users', Users)
@@ -42,4 +42,5 @@ urlpatterns = [
     path('register/', RegisterViewSet.as_view({'post': 'create'})),
     path('menu/', MenuViewSet.as_view({'get': 'retrieve'})),
     path('users/', UsersViewSet.as_view({'get': 'retrieve', 'post':'create'})),
+    path('customer-type/', CustomerType.as_view({'get': 'get_type'}))
 ]

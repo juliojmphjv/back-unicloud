@@ -8,6 +8,11 @@ admin_menu = [
     'link': "/customers/",
   },
   {
+    'icon': "growth-fill",
+    'text': "Clientes",
+    'link': "/customers/",
+  },
+  {
     'icon': "tile-thumb-fill",
     'text': "Pods",
     'link': "/pods",

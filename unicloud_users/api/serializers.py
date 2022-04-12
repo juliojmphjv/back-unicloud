@@ -36,6 +36,7 @@ class UserProfileSerializer(serializers.Serializer):
     country = serializers.CharField(max_length=150)
 
 class UserListSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     userprofile = UserProfileSerializer(required=True)
     username = serializers.EmailField()
     first_name = serializers.CharField(max_length=150)
@@ -44,6 +45,7 @@ class UserListSerializer(serializers.Serializer):
     is_active = serializers.BooleanField()
 
 class InvitedUserListSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     email = serializers.EmailField()
     created_at = serializers.DateTimeField()
 

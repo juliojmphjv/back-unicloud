@@ -2,7 +2,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.contrib.auth.models import User
 from ..models import InvitedUser, Customer, UserCustomer, CustomerRelationship
-from .serializers import CustomerSerializer
+from .serializers import CustomerSerializer, CustomerTypeSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 from ..receita_federal import ConsultaReceita
@@ -15,9 +15,8 @@ from unicloud_mailersystem.mailer import UniCloudMailer
 from django.shortcuts import get_object_or_404
 from check_root.unicloud_check_root import CheckRoot
 
-
 class CustomerViewSet(viewsets.ViewSet):
-
+    permission_classes(IsAuthenticated,)
     def create(self, request):
         response = None
         status = None
@@ -58,17 +57,30 @@ class CustomerViewSet(viewsets.ViewSet):
 
 
     def list(self, request):
-        if request.user.is_superuser and request.user.is_staff and request.user.is_authenticated:
-            customers = Customer.objects.all()
-            serializer = CustomerSerializer(customers, many=True)
-            return Response(serializer.data)
-        else:
-            return Response(messages.permission_denied, status=403,)
+        organization = Customer.objects.get(id=UserCustomer.objects.get(user_id=request.user.id).customer_id)
+        customers = []
+        customer_list = CustomerRelationship.objects.filter(partner_id=organization.id)
+        for customer in customer_list:
+            customers.append(customer.customer_id)
+        customerlist = Customer.objects.filter(id__in=customers)
+
+        serializer = CustomerSerializer(customerlist, many=True)
+        return Response(serializer.data)
 
 class OneCustomerViewSet(viewsets.ViewSet):
+    permission_classes(IsAuthenticated,)
     def partial_update(self, request, pk):
         if request.user.is_superuser and request.user.is_staff and request.user.is_authenticated:
             customer = Customer.objects.filter(pk=pk)
             customer.update(**request.data)
             serializer = CustomerSerializer(customer, many=True)
             return Response(serializer.data)
+
+class CustomerType(viewsets.ViewSet):
+    permission_classes(IsAuthenticated,)
+    def get_type(self, request):
+        customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
+        customer = Customer.objects.get(id=customer_id)
+        serializer = CustomerTypeSerializer(customer)
+        return Response(serializer.data)
+
