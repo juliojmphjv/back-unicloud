@@ -208,3 +208,5 @@ CORS_ALLOWED_ORIGINS = [
 
 APIKEY_MAILGUN = os.getenv('API_MAILGUN')
 EMAIL_FROM = 'Não Responda <postmaster@uni.cloud>'
+
+CSRF_TRUSTED_ORIGINS = ['https://unicloudbr.azurewebsites.net']
