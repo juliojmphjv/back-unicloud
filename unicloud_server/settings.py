@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 if os.getenv("Djangoenv") == True:
     DEBUG = True
 else:
-    DEBUG = False
+    DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
