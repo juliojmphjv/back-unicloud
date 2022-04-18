@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'unicloud_server.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-if os.getenv("Djangoenv") == True:
+if os.getenv("Djangoenv") == 'True':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -209,7 +209,8 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://unicloudbr.azurewebsites.net"
+    "https://unicloudstorage.z15.web.core.windows.net:80",
+    "https://unicloudstorage.z15.web.core.windows.net:443",
 ]
 
 APIKEY_MAILGUN = os.getenv('API_MAILGUN')
