@@ -1,5 +1,8 @@
 from django.conf import settings
 import requests
+from logs.setup_log import logger
+
+
 class UniCloudMailer:
     def __init__(self, recipient, subject, email):
         self.url = "https://api.mailgun.net/v3/uni.cloud/messages"
@@ -13,8 +16,9 @@ class UniCloudMailer:
         }
 
     def send_mail(self):
-        requests.post(
+        sendmail = requests.post(
             self.url,
             auth=self.auth,
             data=self.data
         )
+        logger.info(sendmail)

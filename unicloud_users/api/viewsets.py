@@ -17,6 +17,7 @@ from check_root.unicloud_check_root import CheckRoot
 from unicloud_tokengenerator.generator import TokenGenerator
 from django.template.loader import get_template
 from unicloud_mailersystem.mailer import UniCloudMailer
+from logs.setup_log import logger
 
 class UsersViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated, )
@@ -87,6 +88,7 @@ class RegisterViewSet(viewsets.ViewSet):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = LoginTokenSerializer
     def get_object(self):
+
         return self.request.user
 
 class MenuViewSet(viewsets.ViewSet):
