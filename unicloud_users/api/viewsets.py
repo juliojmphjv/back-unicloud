@@ -36,31 +36,29 @@ class UsersViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        checkroot = CheckRoot(request)
-        if checkroot.is_root():
-            try:
-                customer = Customer.objects.get(type='root', razao_social='Uni.Cloud')
-                token_generator = TokenGenerator(request.data['email'])
-                token = token_generator.gettoken()
-                invited_user, created = InvitedUser.objects.get_or_create(email=request.data['email'],token=token, customer=customer)
-                if created:
-                    try:
-                        mensagem = {
-                            'empresa': customer.razao_social,
-                            'link': f'http://127.0.0.1:3000/auth-register/?token={token}'
-                        }
-                        rendered_email = get_template('email/welcome.html').render(mensagem)
-                        mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
-                        mailer.send_mail()
-                    except Exception as error:
-                        print(error)
-                        return Response(messages.email_notsent, 400)
-            except Exception as error:
-                print(error)
-                return Response(messages.bad_request, 400)
+        customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
+        customer = Customer.objects.get(id=customer_id)
+        try:
+            token_generator = TokenGenerator(request.data['email'])
+            token = token_generator.gettoken()
+            invited_user, created = InvitedUser.objects.get_or_create(email=request.data['email'],token=token, customer=customer)
+            if created:
+                try:
+                    mensagem = {
+                        'empresa': customer.razao_social,
+                        'link': f'http://127.0.0.1:3000/auth-register/?token={token}'
+                    }
+                    rendered_email = get_template('email/welcome.html').render(mensagem)
+                    mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
+                    mailer.send_mail()
+                except Exception as error:
+                    print(error)
+                    return Response(messages.email_notsent, 400)
+        except Exception as error:
+            print(error)
+            return Response(messages.bad_request, 400)
 
-
-        return Response({'teste':'teste'})
+        return Response({'status':'created'})
 
 class RegisterViewSet(viewsets.ViewSet):
     def create(self, request):
