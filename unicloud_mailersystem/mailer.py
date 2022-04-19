@@ -16,9 +16,12 @@ class UniCloudMailer:
         }
 
     def send_mail(self):
-        sendmail = requests.post(
-            self.url,
-            auth=self.auth,
-            data=self.data
-        )
-        logger.info(sendmail)
+        try:
+            sendmail = requests.post(
+                self.url,
+                auth=self.auth,
+                data=self.data
+            )
+            logger.info(sendmail)
+        except Exception as error:
+            logger.error(error)
