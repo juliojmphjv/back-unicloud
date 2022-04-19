@@ -125,10 +125,14 @@ class TokenViewSet(viewsets.ViewSet):
 
     def check_token(self, request):
         token = InvitedUser.objects.filter(token=request.data['token']).exists()
+        logger.info(f'Token Exists: {token}')
         if token:
-            token_data = InvitedUser.objects.get(token=request.data['token'])
-            serializer = InvitedUserSerializer({'id':token_data.id, 'token':token_data.token, 'email':token_data.email, 'razao_social':token_data.customer.razao_social, 'is_valid':True})
-            return Response(serializer.data)
+            try:
+                token_data = InvitedUser.objects.get(token=request.data['token'])
+                serializer = InvitedUserSerializer({'id':token_data.id, 'token':token_data.token, 'email':token_data.email, 'razao_social':token_data.customer.razao_social, 'is_valid':True})
+                return Response(serializer.data)
+            except Exception as error:
+                logger.error(error)
 
         serializer = InvalidTokenSerializer({'is_valid':False})
         return Response(serializer.data)
