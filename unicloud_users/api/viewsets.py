@@ -67,23 +67,31 @@ class UsersViewSet(viewsets.ViewSet):
 class RegisterViewSet(viewsets.ViewSet):
     def create(self, request):
         checkroot = CheckRoot(request)
+        logger.info(f"user is Root: {checkroot.is_root()}")
         is_invited = get_object_or_404(InvitedUser, email=request.data['username'])
+        logger.info(f"User invited: {is_invited}")
         serialized_data = None
         try:
+            logger.info("Trying to create a user")
             user = User.objects.create_user(username=request.data['username'], password=request.data['password'], email=request.data['username'], first_name=request.data['first_name'], last_name=request.data['last_name'], is_staff=checkroot.is_root(), is_superuser=checkroot.is_root())
-
+            logger.info("User created")
             userprofile = UserProfile(phone=request.data['phone'], address=request.data['address'], city=request.data['city'], state=request.data['state'], country=request.data['country'], user=user)
             userprofile.save()
+            logger.info("User Profile Created")
 
+            logger.info("Creating Relationship with Customer")
             customer = Customer.objects.get(id=is_invited.customer.id)
             customer = UserCustomer(user=user, customer=customer)
             customer.save()
+            logger.info("Relationship done")
 
             serialized_data = UserSerializer(user)
         except Exception as error:
             return Response(messages.permission_denied, 404)
         finally:
+            logger.info("Deleting invite")
             is_invited.delete()
+            logger.info("Invite Deleted")
             return Response(serialized_data.data)
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -123,7 +131,6 @@ class TokenViewSet(viewsets.ViewSet):
 
     def check_token(self, request):
         token = InvitedUser.objects.filter(token=request.data['token']).exists()
-        logger.info(f'Token Exists: {token}')
         if token:
             try:
                 token_data = InvitedUser.objects.get(token=request.data['token'])
