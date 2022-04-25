@@ -66,13 +66,11 @@ class UsersViewSet(viewsets.ViewSet):
 
 class RegisterViewSet(viewsets.ViewSet):
     def create(self, request):
-        isRoot = False
-        if request.user.is_superuser and request.user.is_staff:
-            isRoot = True
+        checkroot = CheckRoot(request)
         is_invited = get_object_or_404(InvitedUser, email=request.data['username'])
         serialized_data = None
         try:
-            user = User.objects.create_user(username=request.data['username'], password=request.data['password'], email=request.data['username'], first_name=request.data['first_name'], last_name=request.data['last_name'], is_staff=isRoot, is_superuser=isRoot)
+            user = User.objects.create_user(username=request.data['username'], password=request.data['password'], email=request.data['username'], first_name=request.data['first_name'], last_name=request.data['last_name'], is_staff=checkroot.is_root(), is_superuser=checkroot.is_root())
 
             userprofile = UserProfile(phone=request.data['phone'], address=request.data['address'], city=request.data['city'], state=request.data['state'], country=request.data['country'], user=user)
             userprofile.save()
