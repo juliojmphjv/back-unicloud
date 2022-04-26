@@ -68,13 +68,23 @@ class RegisterViewSet(viewsets.ViewSet):
     def create(self, request):
         is_invited = InvitedUser.objects.filter(email=request.data['username'])
         serialized_data = None
+        isunicloud_user = False
         if is_invited.exists():
             try:
-                user = User.objects.create_user(username=request.data['username'], password=request.data['password'], email=request.data['username'], first_name=request.data['first_name'], last_name=request.data['last_name'], is_staff=request.user.is_staff, is_superuser=request.user.is_superuser)
+                logger.info("Get Customer of user invited Data")
+                customer = Customer.objects.get(id=is_invited[0].customer_id)
+                logger.info(f"Customer is {customer}")
+
+                logger.info("Creating User and their profile")
+                logger.info(f"Customer is root: {customer.type}")
+                if customer.type == "root":
+                    isunicloud_user=True
+                user = User.objects.create_user(username=request.data['username'], password=request.data['password'], email=request.data['username'], first_name=request.data['first_name'], last_name=request.data['last_name'], is_staff=isunicloud_user, is_superuser=isunicloud_user)
                 userprofile = UserProfile(phone=request.data['phone'], address=request.data['address'], city=request.data['city'], state=request.data['state'], country=request.data['country'], user=user)
                 userprofile.save()
-                logger.info(is_invited[0].customer_id)
-                customer = Customer.objects.get(id=is_invited[0].customer_id)
+                logger.info(f"User Created: {user.id}")
+
+
                 logger.info(customer)
                 user_customer = UserCustomer(user=user, customer_id=customer.id)
                 user_customer.save()
