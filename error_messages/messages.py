@@ -54,3 +54,17 @@ bad_request = {
         ]
     }
 }
+
+invite_already_exist = {
+    'data': {
+        'detail': 'Already Exist',
+        'code': 'exception_occured',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'User Inveted Already exist',
+            }
+        ]
+    }
+}

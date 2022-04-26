@@ -66,33 +66,29 @@ class UsersViewSet(viewsets.ViewSet):
 
 class RegisterViewSet(viewsets.ViewSet):
     def create(self, request):
-        checkroot = CheckRoot(request)
-        logger.info(f"user is Root: {checkroot.is_root()}")
-        is_invited = get_object_or_404(InvitedUser, email=request.data['username'])
-        logger.info(f"User invited: {is_invited}")
+        is_invited = InvitedUser.objects.filter(email=request.data['username'])
         serialized_data = None
-        try:
-            logger.info("Trying to create a user")
-            user = User.objects.create_user(username=request.data['username'], password=request.data['password'], email=request.data['username'], first_name=request.data['first_name'], last_name=request.data['last_name'], is_staff=checkroot.is_root(), is_superuser=checkroot.is_root())
-            logger.info("User created")
-            userprofile = UserProfile(phone=request.data['phone'], address=request.data['address'], city=request.data['city'], state=request.data['state'], country=request.data['country'], user=user)
-            userprofile.save()
-            logger.info("User Profile Created")
+        if is_invited.exists():
+            try:
+                user = User.objects.create_user(username=request.data['username'], password=request.data['password'], email=request.data['username'], first_name=request.data['first_name'], last_name=request.data['last_name'], is_staff=request.user.is_staff, is_superuser=request.user.is_superuser)
+                userprofile = UserProfile(phone=request.data['phone'], address=request.data['address'], city=request.data['city'], state=request.data['state'], country=request.data['country'], user=user)
+                userprofile.save()
+                logger.info(is_invited[0].customer_id)
+                customer = Customer.objects.get(id=is_invited[0].customer_id)
+                logger.info(customer)
+                user_customer = UserCustomer(user=user, customer_id=customer.id)
+                user_customer.save()
 
-            logger.info("Creating Relationship with Customer")
-            customer = Customer.objects.get(id=is_invited.customer.id)
-            customer = UserCustomer(user=user, customer=customer)
-            customer.save()
-            logger.info("Relationship done")
-
-            serialized_data = UserSerializer(user)
-        except Exception as error:
-            return Response(messages.permission_denied, 404)
-        finally:
-            logger.info("Deleting invite")
-            is_invited.delete()
-            logger.info("Invite Deleted")
-            return Response(serialized_data.data)
+                serialized_data = UserSerializer(user)
+            except Exception as error:
+                logger.error(error)
+                return Response(messages.permission_denied, 404)
+            finally:
+                logger.info("Deleting invite")
+                is_invited.delete()
+                logger.info("Invite Deleted")
+                return Response(serialized_data.data)
+        return Response(messages.already_exist)
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = LoginTokenSerializer
