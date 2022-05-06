@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -214,3 +216,17 @@ APIKEY_MAILGUN = os.getenv('APIKEY_MAILGUN')
 EMAIL_FROM = 'Não Responda <postmaster@uni.cloud>'
 
 CSRF_TRUSTED_ORIGINS = ['https://unicloudbr.azurewebsites.net', 'http://localhost:3000', 'http://127.0.0.1:3000']
+
+sentry_sdk.init(
+    dsn="https://c8b3f8b0f3d549429ff43a568d13096a@o1235247.ingest.sentry.io/6385157",
+    integrations=[DjangoIntegration()],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)

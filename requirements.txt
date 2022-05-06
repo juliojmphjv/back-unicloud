@@ -15,6 +15,7 @@ psycopg2-binary==2.9.3
 PyJWT==1.7.1
 pytz==2021.3
 requests==2.27.1
+sentry-sdk==1.5.11
 sqlparse==0.4.2
 style==1.1.0
 update==0.0.1
