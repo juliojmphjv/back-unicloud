@@ -31,7 +31,6 @@ router = routers.DefaultRouter()
 # router.register(r'users', Users)
 # router.register(r'invited-user', InvitedUserViewSet)
 
-
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
@@ -45,5 +44,5 @@ urlpatterns = [
     path('register/', RegisterViewSet.as_view({'post': 'create'})),
     path('menu/', MenuViewSet.as_view({'get': 'retrieve'})),
     path('users/', UsersViewSet.as_view({'get': 'retrieve', 'post':'create'})),
-    path('customer-type/', CustomerType.as_view({'get': 'get_type'}))
+    path('customer-type/', CustomerType.as_view({'get': 'get_type'})),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

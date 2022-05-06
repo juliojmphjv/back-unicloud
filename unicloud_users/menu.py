@@ -10,7 +10,7 @@ admin_menu = [
   {
     'icon': "tile-thumb-fill",
     'text': "Pods",
-    'link': "/pods",
+    'link': "/unicloud-pods",
   },
   {
     'icon': "activity-round-fill",
