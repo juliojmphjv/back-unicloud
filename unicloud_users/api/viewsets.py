@@ -97,7 +97,7 @@ class RegisterViewSet(viewsets.ViewSet):
                 logger.info("Deleting invite")
                 is_invited.delete()
                 logger.info("Invite Deleted")
-                return Response(serialized_data.data)
+            return Response(serialized_data.data)
         return Response(messages.already_exist)
 
 class MyTokenObtainPairView(TokenObtainPairView):
