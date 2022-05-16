@@ -84,3 +84,11 @@ class CustomerType(viewsets.ViewSet):
         serializer = CustomerTypeSerializer(customer)
         return Response(serializer.data)
 
+class Organization(viewsets.ViewSet):
+    permission_classes(IsAuthenticated,)
+
+    def get_organization(self, request):
+        customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
+        customer = Customer.objects.get(id=customer_id)
+        serializer = CustomerSerializer(customer)
+        return Response(serializer.data)
