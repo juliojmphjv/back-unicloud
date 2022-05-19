@@ -122,21 +122,28 @@ class OrganizationLogoViewSet(viewsets.ViewSet):
             if customer.type == 'customer':
                 relationship = CustomerRelationship.objects.get(customer_id=customer.id)
                 organization_father = Customer.objects.get(id=relationship.partner_id)
-                logo = OrganizationLogo.objects.filter(organization=organization_father.id).exists()
-                logger.info(logo)
-                if logo:
+                father_logo = OrganizationLogo.objects.filter(organization=organization_father.id).exists()
+                if father_logo:
                     customer_logo = OrganizationLogo.objects.get(organization=organization_father.id)
+                    serializer = LogoSerializer(customer_logo)
+                    return Response(serializer.data)
                 else:
-                    organization_root = Customer.objects.get(type='root')
-                    customer_logo = OrganizationLogo.objects.get(organization=organization_root.id)
-
-                logger.info(customer_logo)
-                serializer=LogoSerializer(customer_logo)
-                return Response(serializer.data)
+                    if Customer.objects.filter(type='root').exists():
+                        organization_root = Customer.objects.get(type='root')
+                        if OrganizationLogo.objects.filter(organization_id=organization_root.id).exists():
+                            customer_logo = OrganizationLogo.objects.get(organization_id=organization_root.id)
+                            serializer = LogoSerializer(customer_logo)
+                            return Response(serializer.data)
+                        else: return Response({'logo': None})
+                    else: return Response({'logo': None})
             else:
                 organization_root = Customer.objects.get(type='root')
-                customer_logo = OrganizationLogo.objects.get(organization=organization_root.id)
-                serializer = LogoSerializer(customer_logo)
-                return Response(serializer.data)
+
+                if OrganizationLogo.objects.filter(organization=organization_root.id).exists():
+                    customer_logo = OrganizationLogo.objects.filter(organization=organization_root.id)
+                    serializer = LogoSerializer(customer_logo)
+                    return Response(serializer.data)
+                else: return Response({'logo': None})
+
         except Exception as error:
             logger.error(error)
