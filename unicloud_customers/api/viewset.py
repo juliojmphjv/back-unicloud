@@ -136,6 +136,7 @@ class OrganizationLogoViewSet(viewsets.ViewSet):
                         if OrganizationLogo.objects.filter(organization_id=organization_root.id).exists():
                             logger.info('Root has a logo')
                             customer_logo = OrganizationLogo.objects.get(organization_id=organization_root.id)
+                            logger.info(customer_logo)
                             serializer = LogoSerializer(customer_logo)
                             return Response(serializer.data)
                         else:
