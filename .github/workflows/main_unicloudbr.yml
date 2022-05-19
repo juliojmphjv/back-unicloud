@@ -67,6 +67,10 @@ jobs:
           name: python-app
           path: .
 
+      - name: start virtual environment
+        run: |
+          source venv/bin/activate
+
       - name: Run Migration
         run: |
           python manage.py migrate
