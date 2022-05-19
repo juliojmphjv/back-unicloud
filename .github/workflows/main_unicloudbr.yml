@@ -42,6 +42,9 @@ jobs:
       
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Run migrations
+        run: python manage.py migrate
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       
@@ -66,14 +69,6 @@ jobs:
         with:
           name: python-app
           path: .
-
-      - name: start virtual environment
-        run: |
-          source venv/bin/activate
-
-      - name: Run Migration
-        run: |
-          python manage.py migrate
           
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
