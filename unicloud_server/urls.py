@@ -22,7 +22,7 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework import routers
 from unicloud_users.api.viewsets import MyTokenObtainPairView, UsersViewSet, RegisterViewSet, MenuViewSet, InvitedUsersViewSet, TokenViewSet
-from unicloud_customers.api.viewset import CustomerViewSet, OneCustomerViewSet, CustomerType, Organization
+from unicloud_customers.api.viewset import CustomerViewSet, OneCustomerViewSet, CustomerType, Organization, OrganizationLogo, OrganizationLogoViewSet
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -46,4 +46,9 @@ urlpatterns = [
     path('users/', UsersViewSet.as_view({'get': 'retrieve', 'post':'create'})),
     path('customer-type/', CustomerType.as_view({'get': 'get_type'})),
     path('get-organization/', Organization.as_view({'get': 'get_organization'})),
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('organization-logo/', OrganizationLogoViewSet.as_view({'post': 'create', 'get': 'get_logo'})),
+
+]
+if settings.DEBUG:
+  urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
