@@ -149,9 +149,11 @@ class OrganizationLogoViewSet(viewsets.ViewSet):
                 logger.info(f'Customer type: {customer.type}')
                 logger.info('Resquester is not a Customer')
                 organization_root = Customer.objects.get(type='root')
-                if OrganizationLogo.objects.filter(organization=organization_root.id).exists():
-                    logger.info(f'Root has a logo: {OrganizationLogo.objects.filter(organization=organization_root.id).exists()}')
-                    customer_logo = OrganizationLogo.objects.filter(organization=organization_root.id)
+                logger.info(organization_root)
+                if OrganizationLogo.objects.filter(organization_id=organization_root.id).exists():
+                    logger.info(f'Root has a logo: {OrganizationLogo.objects.filter(organization_id=organization_root.id).exists()}')
+                    customer_logo = OrganizationLogo.objects.get(organization_id=organization_root.id)
+                    logger.info(customer_logo)
                     serializer = LogoSerializer(customer_logo)
                     return Response(serializer.data)
                 else: return Response({'logo': None})
