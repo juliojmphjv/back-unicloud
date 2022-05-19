@@ -138,7 +138,6 @@ class OrganizationLogoViewSet(viewsets.ViewSet):
                     else: return Response({'logo': None})
             else:
                 organization_root = Customer.objects.get(type='root')
-
                 if OrganizationLogo.objects.filter(organization=organization_root.id).exists():
                     customer_logo = OrganizationLogo.objects.filter(organization=organization_root.id)
                     serializer = LogoSerializer(customer_logo)
@@ -147,3 +146,4 @@ class OrganizationLogoViewSet(viewsets.ViewSet):
 
         except Exception as error:
             logger.error(error)
+            return Response({'logo': error})
