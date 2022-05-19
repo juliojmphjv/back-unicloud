@@ -120,30 +120,41 @@ class OrganizationLogoViewSet(viewsets.ViewSet):
             customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
             customer = Customer.objects.get(id=customer_id)
             if customer.type == 'customer':
+                logger.info('Requester is a customer')
                 relationship = CustomerRelationship.objects.get(customer_id=customer.id)
                 organization_father = Customer.objects.get(id=relationship.partner_id)
                 father_logo = OrganizationLogo.objects.filter(organization=organization_father.id).exists()
                 if father_logo:
+                    logger.info('Has a partner father')
                     customer_logo = OrganizationLogo.objects.get(organization=organization_father.id)
                     serializer = LogoSerializer(customer_logo)
                     return Response(serializer.data)
                 else:
+                    logger.info('hasnt a partner father')
                     if Customer.objects.filter(type='root').exists():
                         organization_root = Customer.objects.get(type='root')
                         if OrganizationLogo.objects.filter(organization_id=organization_root.id).exists():
+                            logger.info('Root has a logo')
                             customer_logo = OrganizationLogo.objects.get(organization_id=organization_root.id)
                             serializer = LogoSerializer(customer_logo)
                             return Response(serializer.data)
-                        else: return Response({'logo': None})
-                    else: return Response({'logo': None})
+                        else:
+                            logger.info('Root hasnt a logo')
+                            return Response({'logo': None})
+                    else:
+                        logger.info('root doenst exists')
+                        return Response({'logo': None})
             else:
+                logger.info(f'Customer type: {customer.type}')
+                logger.info('Resquester is not a Customer')
                 organization_root = Customer.objects.get(type='root')
                 if OrganizationLogo.objects.filter(organization=organization_root.id).exists():
+                    logger.info(f'Root has a logo: {OrganizationLogo.objects.filter(organization=organization_root.id).exists()}')
                     customer_logo = OrganizationLogo.objects.filter(organization=organization_root.id)
                     serializer = LogoSerializer(customer_logo)
                     return Response(serializer.data)
                 else: return Response({'logo': None})
 
         except Exception as error:
-            logger.error(error)
+            logger.error(f'Erro Except: {error}')
             return Response({'logo': error})
