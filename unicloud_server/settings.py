@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'unicloud_users',
     'rest_framework',
     'unicloud_customers',
-
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -141,11 +141,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-
-STATIC_URL = 'static/'
-
-
 
 
 # Default primary key field type
@@ -230,3 +225,14 @@ sentry_sdk.init(
     # django.contrib.auth) you may enable sending PII data.
     send_default_pii=True
 )
+
+DEFAULT_FILE_STORAGE = 'unicloud_server.custom_azure.AzureMediaStorage'
+STATICFILES_STORAGE = 'unicloud_server.custom_azure.AzureStaticStorage'
+
+STATIC_LOCATION = "static"
+MEDIA_LOCATION = "media"
+
+AZURE_ACCOUNT_NAME = "brokermediastorage"
+AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
+STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'

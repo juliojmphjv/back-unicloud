@@ -1,8 +1,8 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.contrib.auth.models import User
-from ..models import InvitedUser, Customer, UserCustomer, CustomerRelationship
-from .serializers import CustomerSerializer, CustomerTypeSerializer
+from ..models import InvitedUser, Customer, UserCustomer, CustomerRelationship, OrganizationLogo
+from .serializers import CustomerSerializer, CustomerTypeSerializer, LogoSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 from ..receita_federal import ConsultaReceita
@@ -14,23 +14,27 @@ from unicloud_tokengenerator.generator import TokenGenerator
 from unicloud_mailersystem.mailer import UniCloudMailer
 from django.shortcuts import get_object_or_404
 from check_root.unicloud_check_root import CheckRoot
+import base64
+from logs.setup_log import logger
+from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
+
 
 class CustomerViewSet(viewsets.ViewSet):
     permission_classes(IsAuthenticated,)
     def create(self, request):
         response = None
         status = None
-        consulta = ConsultaReceita(request.data['cnpj'])
-        customer_data = consulta.get_data()
-        check_root = CheckRoot(request)
-        organzation_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
-        organization_instance = Customer.objects.get(id=organzation_id)
-        if check_root.is_root():
-            customer, created = Customer.objects.get_or_create(razao_social=customer_data['nome'], telefone=customer_data['telefone'], email=customer_data['email'], bairro=customer_data['bairro'], logradouro=customer_data['logradouro'], numero=customer_data['numero'], cep=customer_data['cep'], municipio=customer_data['municipio'], nome_fantasia=customer_data['fantasia'], natureza_juridica=customer_data['natureza_juridica'], estado=customer_data['uf'], cnpj=customer_data['cnpj'], type=request.data['type'])
-        else:
-            customer, created = Customer.objects.get_or_create(razao_social=customer_data['nome'], telefone=customer_data['telefone'], email=customer_data['email'], bairro=customer_data['bairro'], logradouro=customer_data['logradouro'], numero=customer_data['numero'], cep=customer_data['cep'], municipio=customer_data['municipio'], nome_fantasia=customer_data['fantasia'], natureza_juridica=customer_data['natureza_juridica'], estado=customer_data['uf'], cnpj=customer_data['cnpj'], type='customer')
+        consulta_receitafederal = ConsultaReceita(request.data['cnpj'])
+        customer_data = consulta_receitafederal.get_data()
+        check_requester = CheckRoot(request)
+        requester_organzation_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
+        requester_organization_instance = Customer.objects.get(id=requester_organzation_id)
+        if check_requester.is_root():
+            type=request.data['type']
+        else: type='customer'
+        customer, created = Customer.objects.get_or_create(razao_social=customer_data['nome'], telefone=customer_data['telefone'], email=customer_data['email'], bairro=customer_data['bairro'], logradouro=customer_data['logradouro'], numero=customer_data['numero'], cep=customer_data['cep'], municipio=customer_data['municipio'], nome_fantasia=customer_data['fantasia'], natureza_juridica=customer_data['natureza_juridica'], estado=customer_data['uf'], cnpj=customer_data['cnpj'], type=type)
         if created:
-            relationship = CustomerRelationship(customer=customer, partner=organization_instance)
+            relationship = CustomerRelationship(customer=customer, partner=requester_organization_instance)
             relationship.save()
             token_generator = TokenGenerator(request.data['email'])
             token = token_generator.gettoken()
@@ -85,10 +89,54 @@ class CustomerType(viewsets.ViewSet):
         return Response(serializer.data)
 
 class Organization(viewsets.ViewSet):
-    permission_classes(IsAuthenticated,)
-
+    permission_classes(IsAuthenticated, )
+    parser_classes = [FileUploadParser]
     def get_organization(self, request):
         customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
         customer = Customer.objects.get(id=customer_id)
         serializer = CustomerSerializer(customer)
         return Response(serializer.data)
+
+class OrganizationLogoViewSet(viewsets.ViewSet):
+    serializer_class = LogoSerializer
+    def create(self, request):
+        try:
+            customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
+            customer = Customer.objects.get(id=customer_id)
+            file_uploaded = request.FILES.get('file_uploaded')
+            content_type = file_uploaded.content_type
+            logger.info(content_type)
+            response = "POST API and you have uploaded a {} file".format(content_type)
+            if customer.type == 'root' or customer.type == 'partner':
+                createlogo = OrganizationLogo(logo=file_uploaded, organization=customer)
+                createlogo.save()
+
+            return Response(response)
+        except Exception as error:
+            logger.info(error)
+
+    def get_logo(self, request):
+        try:
+            customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
+            customer = Customer.objects.get(id=customer_id)
+            if customer.type == 'customer':
+                relationship = CustomerRelationship.objects.get(customer_id=customer.id)
+                organization_father = Customer.objects.get(id=relationship.partner_id)
+                logo = OrganizationLogo.objects.filter(organization=organization_father.id).exists()
+                logger.info(logo)
+                if logo:
+                    customer_logo = OrganizationLogo.objects.get(organization=organization_father.id)
+                else:
+                    organization_root = Customer.objects.get(type='root')
+                    customer_logo = OrganizationLogo.objects.get(organization=organization_root.id)
+
+                logger.info(customer_logo)
+                serializer=LogoSerializer(customer_logo)
+                return Response(serializer.data)
+            else:
+                organization_root = Customer.objects.get(type='root')
+                customer_logo = OrganizationLogo.objects.get(organization=organization_root.id)
+                serializer = LogoSerializer(customer_logo)
+                return Response(serializer.data)
+        except Exception as error:
+            logger.error(error)

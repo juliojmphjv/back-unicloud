@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from ..models import InvitedUser
-from rest_framework.fields import CurrentUserDefault
-
+from rest_framework.serializers import Serializer, FileField
 
 
 class CustomerSerializer(serializers.Serializer):
@@ -23,3 +21,6 @@ class CustomerSerializer(serializers.Serializer):
 
 class CustomerTypeSerializer(serializers.Serializer):
      type = serializers.CharField(max_length=15)
+
+class LogoSerializer(serializers.Serializer):
+    logo = FileField()

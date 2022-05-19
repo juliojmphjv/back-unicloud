@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from unicloud_server.custom_azure import AzureMediaStorage
 # Create your models here.
 
 class Customer(models.Model):
@@ -44,3 +44,16 @@ class InvitedUser(models.Model):
 
     def __str__(self):
         return f'{self.email} invitation from {self.customer}'
+
+def customer_directory_path(instance, filename):
+    return '{0}/{1}'.format(instance, filename)
+
+class OrganizationLogo(models.Model):
+
+    organization = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    logo = models.ImageField(storage=AzureMediaStorage, upload_to=customer_directory_path)
+
+    def __str__(self):
+        return self.organization.razao_social
+
+
