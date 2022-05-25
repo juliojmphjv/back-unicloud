@@ -1,0 +1,110 @@
+{
+	"token": {
+		"domain": {
+			"id": "msp",
+			"name": "cloud_msp"
+		},
+		"methods": ["password"],
+		"roles": [{
+			"id": "_member_",
+			"name": "_member_"
+		}],
+		"expires_at": "2022-05-24T23:57:57.000000Z",
+		"catalog": [{
+			"endpoints": [],
+			"type": "volume",
+			"id": "14e104ffa8ca439e97aab57838e1ee3e",
+			"name": "cinder"
+		}, {
+			"endpoints": [{
+				"url": "http://neutron-server.service.strato:9696",
+				"interface": "internal",
+				"region": null,
+				"region_id": null,
+				"id": "28bd74f0968c4ade920a1bdca31fb0c5"
+			}, {
+				"url": "http://neutron-server.service.strato:9696",
+				"interface": "admin",
+				"region": null,
+				"region_id": null,
+				"id": "9b1f33dbaaf74b80a523eaffa0f9a213"
+			}, {
+				"url": "http://neutron-server.service.strato:9696",
+				"interface": "public",
+				"region": null,
+				"region_id": null,
+				"id": "a47ef6d4b0d546889411f0fb6a426a0f"
+			}],
+			"type": "network",
+			"id": "16c738bdb98d4eeb80b98422d1c88be5",
+			"name": "neutron"
+		}, {
+			"endpoints": [],
+			"type": "compute",
+			"id": "19ef29c46c60450fba4b1edf885580dc",
+			"name": "nova"
+		}, {
+			"endpoints": [{
+				"url": "http://openstack-keystone.service.strato:35357/v3",
+				"interface": "admin",
+				"region": null,
+				"region_id": null,
+				"id": "08475ef667ad4c2494115b2e26ac8401"
+			}, {
+				"url": "http://openstack-keystone.service.strato:35357/v3",
+				"interface": "internal",
+				"region": null,
+				"region_id": null,
+				"id": "548d0ee344024b669fd5226f220dc403"
+			}, {
+				"url": "http://openstack-keystone.service.strato:35357/v3",
+				"interface": "public",
+				"region": null,
+				"region_id": null,
+				"id": "e43a653988a4418fa80e789078cf71b5"
+			}],
+			"type": "identity",
+			"id": "8c4e783dbcc74bfba0f52e3f4720d7e3",
+			"name": "keystone"
+		}, {
+			"endpoints": [{
+				"url": "http://openstack-glance.service.strato:9292",
+				"interface": "internal",
+				"region": null,
+				"region_id": null,
+				"id": "519f929c935749589562121cedc1436e"
+			}, {
+				"url": "http://openstack-glance.service.strato:9292",
+				"interface": "public",
+				"region": null,
+				"region_id": null,
+				"id": "b190c1c6e2c04003aa2244a0a7c6fa19"
+			}, {
+				"url": "http://openstack-glance.service.strato:9292",
+				"interface": "admin",
+				"region": null,
+				"region_id": null,
+				"id": "b78c396f590d4523b1c40db37c80c74b"
+			}],
+			"type": "image",
+			"id": "a3243ae3311b4792bcf37fd6cd5eef4a",
+			"name": "glance"
+		}, {
+			"endpoints": [],
+			"type": "volumev2",
+			"id": "ef41f4bfce2d4cd0b2dc5a9e8293ea32",
+			"name": "cinderv2"
+		}],
+		"user": {
+			"domain": {
+				"id": "msp",
+				"name": "cloud_msp"
+			},
+			"id": "232aa63f6be14a44955bd9cfc4ce6820",
+			"name": "unicloud.broker",
+			"password_expires_at": "2022-07-14 17:56:41"
+		},
+		"audit_ids": ["4F5BT58ASvG-IdfN-d0org"],
+		"issued_at": "2022-05-24T19:57:57.000000Z"
+	}
+}

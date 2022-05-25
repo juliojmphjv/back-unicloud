@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'unicloud_customers',
     'storages',
+    'unicloud_pods',
 ]
 
 MIDDLEWARE = [
