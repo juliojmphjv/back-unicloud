@@ -3,17 +3,17 @@ admin_menu = [
     'heading': "Administração",
   },
   {
-    'icon': "growth-fill",
+    'icon': "RiGroup2Line",
     'text': "Clientes",
     'link': "/customers/",
   },
   {
-    'icon': "tile-thumb-fill",
+    'icon': "RiDashboardLine",
     'text': "Pods",
     'link': "/unicloud-pods",
   },
   {
-    'icon': "activity-round-fill",
+    'icon': "RiNumbersLine",
     'text': "Monitoramento",
     'link': "/monitor",
   },
@@ -21,7 +21,7 @@ admin_menu = [
 
 customer_menu = [
 {
-    'heading': "Time de usuários",
+    'heading': "RiTeamLine",
   },
   {
     'icon': "users-fill",
