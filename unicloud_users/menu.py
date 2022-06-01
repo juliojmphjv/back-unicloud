@@ -21,10 +21,10 @@ admin_menu = [
 
 customer_menu = [
 {
-    'heading': "RiTeamLine",
+    'heading': "Time de usuários",
   },
   {
-    'icon': "users-fill",
+    'icon': "RiTeamLine",
     'text': "Usuários",
     'link': "/user-list-default",
 
