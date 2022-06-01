@@ -110,10 +110,15 @@ class MenuViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
     def retrieve(self, request):
         if request.user.is_superuser and request.user.is_staff:
-            menu = [*admin_menu, *customer_menu]
-            return Response(JSONRenderer().render(menu))
+            try:
+                menu = {'menu': [*admin_menu, *customer_menu]}
+                serializer = MenuSerializer(menu)
+                return Response(serializer.data)
+            except Exception as error:
+                logger.error(error)
+                return Response(error)
         serializer = MenuSerializer(customer_menu)
-        return Response(JSONRenderer().render(customer_menu))
+        return Response(serializer.data)
 
 class InvitedUsersViewSet(viewsets.ViewSet):
     # permission_classes = (IsAuthenticated)
