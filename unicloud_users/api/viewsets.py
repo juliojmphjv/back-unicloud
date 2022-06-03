@@ -102,8 +102,8 @@ class RegisterViewSet(viewsets.ViewSet):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = LoginTokenSerializer
-    def get_object(self):
 
+    def get_object(self):
         return self.request.user
 
 class MenuViewSet(viewsets.ViewSet):

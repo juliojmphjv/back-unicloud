@@ -104,14 +104,11 @@ class OrganizationLogoViewSet(viewsets.ViewSet):
             customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
             customer = Customer.objects.get(id=customer_id)
             file_uploaded = request.FILES.get('file_uploaded')
-            content_type = file_uploaded.content_type
-            logger.info(content_type)
-            response = "POST API and you have uploaded a {} file".format(content_type)
             if customer.type == 'root' or customer.type == 'partner':
                 createlogo = OrganizationLogo(logo=file_uploaded, organization=customer)
                 createlogo.save()
-
-            return Response(response)
+            serializer = LogoSerializer(createlogo)
+            return Response(serializer.data)
         except Exception as error:
             logger.info(error)
 
