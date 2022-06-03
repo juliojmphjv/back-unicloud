@@ -107,8 +107,9 @@ class OrganizationLogoViewSet(viewsets.ViewSet):
             if customer.type == 'root' or customer.type == 'partner':
                 createlogo = OrganizationLogo(logo=file_uploaded, organization=customer)
                 createlogo.save()
-            serializer = LogoSerializer(createlogo)
-            return Response(serializer.data)
+                serializer = LogoSerializer(createlogo)
+                return Response(serializer.data)
+            return Response({'error': 'Not Allowed'})
         except Exception as error:
             logger.info(error)
 
