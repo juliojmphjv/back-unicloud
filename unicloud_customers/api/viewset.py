@@ -106,10 +106,10 @@ class OrganizationLogoViewSet(viewsets.ViewSet):
             file_uploaded = request.FILES.get('file_uploaded')
             if customer.type == 'root' or customer.type == 'partner':
                 if OrganizationLogo.objects.filter(organization=customer).exists():
-                    organization = OrganizationLogo.objects.get(organization=customer)
-                    organization.objects.update(logo=file_uploaded)
-                    organization.save()
-                    serializer = LogoSerializer(organization)
+                    update_logo = OrganizationLogo.objects.get(organization=customer)
+                    update_logo.objects.update(logo=file_uploaded)
+                    update_logo.save()
+                    serializer = LogoSerializer(update_logo)
                     return Response(serializer.data)
                 createlogo = OrganizationLogo.objects.create(logo=file_uploaded, organization=customer)
                 createlogo.save()
