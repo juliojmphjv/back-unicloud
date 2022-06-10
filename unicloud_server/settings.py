@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'storages',
     'unicloud_pods',
     'django_seed',
+    'unicloud_dashboard',
 ]
 
 MIDDLEWARE = [

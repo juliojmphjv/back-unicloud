@@ -26,18 +26,19 @@ def zadara_login():
     headers = {"Content-Type":"application/json"}
 
     response = requests.post(url, data=json.dumps(payload), headers=headers)
-    json_data = json.dumps(response.text)
-
-    encoded = json_data.encode()
-    b64encode = base64.b64encode(encoded)
-    print(str(b64encode))
-
-    volumeheader = {"Content-Type" : "application/json", "x-auth-token": str(b64encode)}
-    volume = 'https://br01-console.uni.cloud/api/v2/volumes'
-
-    volume = requests.get(volume, headers=volumeheader)
-
-    print(volume.text)
+    print(response.text)
+    # json_data = json.dumps(response.text)
+    #
+    # encoded = json_data.encode()
+    # b64encode = base64.b64encode(encoded)
+    # print(str(b64encode))
+    #
+    # volumeheader = {"Content-Type" : "application/json", "x-auth-token": str(b64encode)}
+    # volume = 'https://br01-console.uni.cloud/api/v2/volumes'
+    #
+    # volume = requests.get(volume, headers=volumeheader)
+    #
+    # print(volume.text)
 
 
 zadara_login()
