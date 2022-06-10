@@ -41,4 +41,4 @@ class Zadara:
             return [location.longitude, location.latitude]
         except Exception as error:
             logger.error(error)
-            return [error, error]
+            return ['lon city wasnt found', 'lat city wasnt found']
