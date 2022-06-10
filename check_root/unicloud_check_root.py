@@ -12,7 +12,7 @@ class CheckRoot:
         logger.info(f'user is superuser: {self.request.user.is_superuser}')
         logger.info(f'customer is root: {self.request.user.is_staff}')
 
-        if self.request.user.is_staff and self.request.user.is_superuser and organization.type == "root" and organization.razao_social == "Uni.Cloud" :
+        if self.request.user.is_staff and self.request.user.is_superuser and organization.type == "root":
             return True
         return False
 
