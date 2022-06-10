@@ -15,29 +15,36 @@ class Dashboard(viewsets.ViewSet):
     permission_classes(IsAuthenticated, )
 
     def get_dashboard(self, request):
+        logger.info(request.user)
         requester = CheckRoot(request)
         dashboard = {
             'customers': [],
             'partners': [],
             'locations': [],
         }
-        if requester.is_root():
+        try:
+            if requester.is_root():
+                logger.info('Requester is root')
+                try:
+                    logger.info('Try')
+                    customers = Customer.objects.filter(type='customer')
+                    partners = Customer.objects.filter(type='partner')
+                    zadara_pods = ZadaraPods.objects.all()
+                    for customer in customers:
+                        dashboard['customers'].append(customer.razao_social)
+                    for partner in partners:
+                        dashboard['partners'].append(partner.razao_social)
+                    for pod in zadara_pods:
+                        vendor = Zadara(pod)
+                        dashboard['locations'].append(vendor.get_pods_geolocation(pod.location))
+                    serializer = DashboardSerializer(dashboard)
+                    return Response(serializer.data)
+                except Exception as error:
+                    serializer = DashboardSerializer(dashboard)
+                    logger.error(error)
+                    return Response(serializer.errors)
+            return Response({'dashboard': 'User Dashboard hasnt data available'})
+        except Exception as error:
+            logger.error(error)
+            return Response({'error': error})
 
-            customers = Customer.objects.filter(type='customer')
-            partners = Customer.objects.filter(type='partner')
-            zadara_pods = ZadaraPods.objects.all()
-
-            try:
-                for customer in customers:
-                    dashboard['customers'].append(customer.razao_social)
-                for partner in partners:
-                    dashboard['partners'].append(partner.razao_social)
-                for pod in zadara_pods:
-                    vendor = Zadara(pod)
-                    dashboard['locations'].append(vendor.get_pods_geolocation(pod.location))
-                serializer = DashboardSerializer(dashboard)
-                return Response(serializer.data)
-            except Exception as error:
-                serializer = DashboardSerializer(dashboard)
-                logger.error(error)
-                return Response(serializer.errors)
