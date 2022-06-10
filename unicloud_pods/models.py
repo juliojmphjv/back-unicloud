@@ -9,4 +9,4 @@ class ZadaraPods(models.Model):
     url_base = models.CharField(max_length=500)
     pod_user = models.CharField(max_length=50)
     pod_password = models.CharField(max_length=150)
-
+    domain_tenant = models.CharField(max_length=300, null=True, default=None)
