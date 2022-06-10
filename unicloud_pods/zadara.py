@@ -35,6 +35,10 @@ class Zadara:
         pass
 
     def get_pods_geolocation(self, location):
-        geolocator = Nominatim(user_agent="Uni.Cloud")
-        location = geolocator.geocode(location)
-        return [location.longitude, location.latitude]
+        try:
+            geolocator = Nominatim(user_agent="Uni.Cloud")
+            location = geolocator.geocode(location)
+            return [location.longitude, location.latitude]
+        except Exception as error:
+            logger.error(error)
+            return [error, error]
