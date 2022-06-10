@@ -15,7 +15,6 @@ class Dashboard(viewsets.ViewSet):
     permission_classes(IsAuthenticated, )
 
     def get_dashboard(self, request):
-        logger.info(request.user)
         requester = CheckRoot(request)
         dashboard = {
             'customers': [],
@@ -26,7 +25,6 @@ class Dashboard(viewsets.ViewSet):
             if requester.is_root():
                 logger.info('Requester is root')
                 try:
-                    logger.info('Try')
                     customers = Customer.objects.filter(type='customer')
                     partners = Customer.objects.filter(type='partner')
                     zadara_pods = ZadaraPods.objects.all()
@@ -43,6 +41,7 @@ class Dashboard(viewsets.ViewSet):
                     serializer = DashboardSerializer(dashboard)
                     logger.error(error)
                     return Response(serializer.errors)
+            logger.info(requester.is_root())
             return Response({'dashboard': 'User Dashboard hasnt data available'})
         except Exception as error:
             logger.error(error)
