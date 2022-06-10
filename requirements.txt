@@ -16,6 +16,8 @@ djangorestframework==3.13.1
 djangorestframework-simplejwt==5.1.0
 drf-writable-nested==0.6.3
 Faker==13.12.0
+geographiclib==1.52
+geopy==2.2.0
 idna==3.3
 importlib-metadata==4.11.3
 isodate==0.6.1
