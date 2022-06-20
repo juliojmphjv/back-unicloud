@@ -34,7 +34,7 @@ class Dashboard(viewsets.ViewSet):
                         dashboard['partners'].append(partner.razao_social)
                     for pod in zadara_pods:
                         vendor = Zadara(pod)
-                        dashboard['locations'].append(vendor.get_pods_geolocation(pod.location))
+                        dashboard['locations'].append({f'{pod.location}-{pod.name}': vendor.get_pods_geolocation(pod.location)})
                     serializer = DashboardSerializer(dashboard)
                     return Response(serializer.data)
                 except Exception as error:
