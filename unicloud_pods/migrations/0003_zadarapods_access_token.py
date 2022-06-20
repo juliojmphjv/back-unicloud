@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='zadarapods',
             name='access_token',
-            field=models.CharField(default=None, max_length=100000, null=None),
+            field=models.CharField(default=None, max_length=100000, null=True),
         ),
     ]
