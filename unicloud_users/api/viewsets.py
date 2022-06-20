@@ -36,36 +36,7 @@ class UsersViewSet(viewsets.ViewSet):
         serializer = UserListSerializer(userlist, many=True)
         return Response(serializer.data)
 
-    def create(self, request):
-        customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
-        customer = Customer.objects.get(id=customer_id)
-        try:
-            logger.info('Creating an invite')
-            token_generator = TokenGenerator(request.data['email'])
-            token = token_generator.gettoken()
-            invited_user, created = InvitedUser.objects.get_or_create(email=request.data['email'],token=token, customer=customer)
-            if created:
-                logger.info('Invite created, sending e-mail')
-                try:
-                    mensagem = {
-                        'empresa': customer.razao_social,
-                        'link': f'https://broker.uni.cloud/auth-register/?token={token}'
-                    }
-                    rendered_email = get_template('email/welcome.html').render(mensagem)
-                    mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
-                    mailer.send_mail()
-                    logger.info('invite sent by e-mail')
-                except Exception as error:
-                    logger.error(error)
-                    return Response(messages.email_notsent, 400)
-        except Exception as error:
-            logger.error(error)
-            return Response(messages.bad_request, 400)
-
-        return Response({'status':'created'})
-
-class RegisterViewSet(viewsets.ViewSet):
-    def create(self, request):
+    def create_registered_user(self, request):
         is_invited = InvitedUser.objects.filter(email=request.data['username'])
         serialized_data = None
         isunicloud_user = False
@@ -120,20 +91,40 @@ class MenuViewSet(viewsets.ViewSet):
         serializer = MenuSerializer(customer_menu)
         return Response(serializer.data)
 
-class InvitedUsersViewSet(viewsets.ViewSet):
+class InviteUsersViewSet(viewsets.ViewSet):
     # permission_classes = (IsAuthenticated)
     def create(self, request):
-        customer = Customer.objects.get(id=1)
-        inviteduser = InvitedUser(token=request.data['token'], email=request.data['email'], customer=customer)
-        inviteduser.save()
-        serializer = InvitedUserSerializer({'teste': 'teste'})
-        return Response(JSONRenderer().render(serializer.data))
+        customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
+        customer = Customer.objects.get(id=customer_id)
+        try:
+            logger.info('Creating an invite')
+            token_generator = TokenGenerator(request.data['email'])
+            token = token_generator.gettoken()
+            invited_user, created = InvitedUser.objects.get_or_create(email=request.data['email'], token=token,
+                                                                      customer=customer)
+            if created:
+                logger.info('Invite created, sending e-mail')
+                try:
+                    mensagem = {
+                        'empresa': customer.razao_social,
+                        'link': f'https://broker.uni.cloud/auth-register/?token={token}'
+                    }
+                    rendered_email = get_template('email/welcome.html').render(mensagem)
+                    mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
+                    mailer.send_mail()
+                    logger.info('invite sent by e-mail')
+                except Exception as error:
+                    logger.error(error)
+                    return Response(messages.email_notsent, 400)
+        except Exception as error:
+            logger.error(error)
+            return Response(messages.bad_request, 400)
+
+        return Response({'status': 'created'})
 
     def retrieve(self, request):
         organization = UserCustomer.objects.get(user_id=request.user.id)
-        print(organization.customer_id)
         invited_users_list = InvitedUser.objects.filter(customer_id=organization.customer_id)
-        print(invited_users_list)
         serializar = InvitedUserListSerializer(invited_users_list, many=True)
 
         return Response(serializar.data)
