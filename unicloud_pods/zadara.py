@@ -7,6 +7,7 @@ class Zadara:
     def __init__(self, pod):
 
         self.url_base = f'{pod.url_base}'
+        self.headers = {"Content-Type": "application/json"}
         self.payload = {
         "auth":{
             "identity":{
@@ -25,12 +26,20 @@ class Zadara:
             "auto_enable_mfa":True}}
 
     def authenticate(self):
-        url = self.url_base
-        headers = {"Content-Type": "application/json"}
-        response = requests.post(f'{url}/api/v2/identity/auth', data=json.dumps(self.payload), headers=headers)
-        return response
+        endpoint = "/api/v2/identity/auth"
+        response = requests.post(f'{self.url_base}{endpoint}', data=json.dumps(self.payload), headers=self.headers)
+        return response.headers['x-subject-token']
 
-    def get_zadara_pod_vcpu(self):
+    def get_zadara_pod_sparenodes(self):
+        token = self.authenticate()
+        endpoint = '/api/v2/nodes?detailed=true'
+        try:
+            self.headers['x-auth-token'] = token
+            logger.info(self.headers)
+            response = requests.get(f'{self.url_base}{endpoint}', headers=self.headers)
+            logger.info(response.text)
+        except Exception as error:
+            logger.error(error)
 
         pass
 
