@@ -18,6 +18,9 @@ from unicloud_tokengenerator.generator import TokenGenerator
 from django.template.loader import get_template
 from unicloud_mailersystem.mailer import UniCloudMailer
 from logs.setup_log import logger
+import datetime
+from django.utils import timezone
+
 
 class UsersViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated, )
@@ -136,10 +139,43 @@ class TokenViewSet(viewsets.ViewSet):
         if token:
             try:
                 token_data = InvitedUser.objects.get(token=request.data['token'])
-                serializer = InvitedUserSerializer({'id':token_data.id, 'token':token_data.token, 'email':token_data.email, 'razao_social':token_data.customer.razao_social, 'is_valid':True})
-                return Response(serializer.data)
+                date_expires = datetime.datetime.strftime(token_data.created_at + datetime.timedelta(hours=24),
+                                                          "%Y-%m-%d %H:%M:%S")
+                if date_expires < timezone.now():
+                    serializer = InvitedUserSerializer({'id':token_data.id, 'token':token_data.token, 'email':token_data.email, 'razao_social':token_data.customer.razao_social, 'is_valid':True})
+                    return Response(serializer.data)
+                else:
+                    logger.info(f'Token 24h timedelta expired.'
+                                f'Token created at: {token_data.created_at}'
+                                f'Time was tried to activate: {timezone.now()}')
+                    return Response(messages.invitation_expires, 410)
             except Exception as error:
                 logger.error(error)
 
         serializer = InvalidTokenSerializer({'is_valid':False})
-        return Response(serializer.data)
+        return Response(messages.invalid_invitation, 404)
+
+    def update_invitation(self, request):
+        logger.info('Re-creating the invite')
+        invite = InvitedUser.objects.filter(id=request.data['id'])
+        if invite.exists():
+            invite = InvitedUser.objects.get(id=request.data['id'])
+            token_generator = TokenGenerator(invite.email)
+            token = token_generator.gettoken()
+            try:
+                invite.objects.update(token=token)
+                invite.save()
+                mensagem = {
+                    'empresa': invite.customer.razao_social,
+                    'link': f'https://broker.uni.cloud/auth-register/?token={token}'
+                }
+                rendered_email = get_template('email/welcome.html').render(mensagem)
+                mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
+                mailer.send_mail()
+                logger.info('invite sent by e-mail')
+                return Response({'status': 'sent'})
+            except Exception as error:
+                logger.error(error)
+                return Response(error)
+        else:
+            return Response(messages.invitation_doesnt_exists, 404)

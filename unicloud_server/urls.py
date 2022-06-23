@@ -50,7 +50,8 @@ urlpatterns = [
     path('get-organization/', Organization.as_view({'get': 'get_organization'})),
     path('organization-logo/', OrganizationLogoViewSet.as_view({'post': 'create', 'get': 'get_logo'})),
     path('create-zadara-pod/', ZadaraPodsViewSet.as_view({'post': 'create'})),
-    path('dashboard/', Dashboard.as_view({'get': 'get_dashboard'}))
+    path('dashboard/', Dashboard.as_view({'get': 'get_dashboard'})),
+    path('update-invitation/', TokenViewSet.as_view({'patch': 'update_invitation'}))
 ]
 if settings.DEBUG:
   urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
