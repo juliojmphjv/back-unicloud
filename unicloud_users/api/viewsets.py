@@ -36,7 +36,8 @@ class UsersViewSet(viewsets.ViewSet):
         serializer = UserListSerializer(userlist, many=True)
         return Response(serializer.data)
 
-    def create_registered_user(self, request):
+class UserRegisterViewSet(viewsets.ViewSet):
+    def user_register(self, request):
         is_invited = InvitedUser.objects.filter(email=request.data['username'])
         serialized_data = None
         isunicloud_user = False
@@ -55,7 +56,6 @@ class UsersViewSet(viewsets.ViewSet):
                 userprofile.save()
                 logger.info(f"User Created: {user.id}")
 
-
                 logger.info(customer)
                 user_customer = UserCustomer(user=user, customer_id=customer.id)
                 user_customer.save()
@@ -73,7 +73,6 @@ class UsersViewSet(viewsets.ViewSet):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = LoginTokenSerializer
-
     def get_object(self):
         return self.request.user
 

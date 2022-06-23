@@ -21,8 +21,8 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView
 )
 from rest_framework import routers
-from unicloud_users.api.viewsets import MyTokenObtainPairView, UsersViewSet, MenuViewSet, InviteUsersViewSet, TokenViewSet
-from unicloud_customers.api.viewset import CustomerViewSet, OneCustomerViewSet, CustomerType, Organization, OrganizationLogo, OrganizationLogoViewSet
+from unicloud_users.api.viewsets import MyTokenObtainPairView, UsersViewSet, MenuViewSet, InviteUsersViewSet, TokenViewSet, UserRegisterViewSet
+from unicloud_customers.api.viewset import CustomerViewSet, OneCustomerViewSet, CustomerType, Organization, OrganizationLogoViewSet
 from unicloud_dashboard.api.viewset import Dashboard
 from unicloud_pods.api.viewset import ZadaraPodsViewSet
 from django.conf.urls.static import static
@@ -45,6 +45,7 @@ urlpatterns = [
     path('one-customer/<int:pk>/', OneCustomerViewSet.as_view({'patch': 'partial_update'})),
     path('menu/', MenuViewSet.as_view({'get': 'retrieve'})),
     path('users/', UsersViewSet.as_view({'get': 'retrieve', 'post':'create_registered_user'})),
+    path('user-register/', UserRegisterViewSet.as_view({'post': 'user_register'})),
     path('customer-type/', CustomerType.as_view({'get': 'get_type'})),
     path('get-organization/', Organization.as_view({'get': 'get_organization'})),
     path('organization-logo/', OrganizationLogoViewSet.as_view({'post': 'create', 'get': 'get_logo'})),
