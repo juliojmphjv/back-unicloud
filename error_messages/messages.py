@@ -13,20 +13,6 @@ permission_denied = {
     }
 }
 
-already_exist = {
-    'data': {
-        'detail': 'Register already exists',
-        'code': 'not_allowed',
-        'messages': [
-            {
-                'token_class': 'AccessToken',
-                'token_type': 'access',
-                'message': 'You try to save some register who already exist',
-            }
-         ]
-    }
-}
-
 email_notsent = {
     'data': {
         'detail': 'Error in mailer system',

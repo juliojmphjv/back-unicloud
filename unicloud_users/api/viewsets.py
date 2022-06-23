@@ -69,7 +69,8 @@ class UserRegisterViewSet(viewsets.ViewSet):
                 is_invited.delete()
                 logger.info("Invite Deleted")
             return Response(serialized_data.data)
-        return Response(messages.already_exist)
+        logger.error(f'invite already exists: {is_invited.exists()}')
+        return Response(messages.invite_already_exist, 303)
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = LoginTokenSerializer
