@@ -91,7 +91,7 @@ invitation_doesnt_exists = {
             {
                 'token_class': 'AccessToken',
                 'token_type': 'access',
-                'message': 'This invitation doesnt existis',
+                'message': 'This invitation doesnt exists',
             }
         ]
     }
