@@ -43,13 +43,13 @@ bad_request = {
 
 invite_already_exist = {
     'data': {
-        'detail': 'Already Exist',
-        'code': 'exception_occured',
+        'detail': 'Already Exists',
+        'code': 'try_to_create_a_register_who_exists',
         'messages': [
             {
                 'token_class': 'AccessToken',
                 'token_type': 'access',
-                'message': 'User Inveted Already exist',
+                'message': 'You Try to create a register who already exists',
             }
         ]
     }
