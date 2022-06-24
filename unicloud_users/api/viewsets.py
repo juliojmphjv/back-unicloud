@@ -126,19 +126,12 @@ class InviteUsersViewSet(viewsets.ViewSet):
             return Response(serializar.data)
 
     def retrieve(self, request):
-        logger.info('vtnc')
         try:
             logger.info(request.user.id)
             organization = UserCustomer.objects.get(user_id=request.user.id)
             has_invitations = InvitedUser.objects.filter(customer_id=organization.customer_id)
             serializar = InvitedUserListSerializer(has_invitations, many=True)
             return Response(serializar.data)
-            # if has_invitations:
-            #     invited_users_list = InvitedUser.objects.filter(customer_id=organization.customer_id)
-            #     serializar = InvitedUserListSerializer(invited_users_list, many=True)
-            #     return Response(serializar.data)
-            # else:
-            #     return Response([])
         except Exception as error:
             logger.error(error)
             return Response({'error': error})
