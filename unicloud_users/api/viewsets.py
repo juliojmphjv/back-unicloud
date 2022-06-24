@@ -95,42 +95,47 @@ class MenuViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 class InviteUsersViewSet(viewsets.ViewSet):
-    # permission_classes = (IsAuthenticated)
+    permission_classes = (IsAuthenticated, )
     def create(self, request):
         customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
         customer = Customer.objects.get(id=customer_id)
+        token = None
         try:
-            logger.info('Creating an invite')
+            logger.info('Check if has invite')
+            invitation = InvitedUser.objects.get(email=request.data['email'])
+            return Response(messages.invite_already_exist, 409)
+
+        except InvitedUser.DoesNotExist:
+            logger.info('Invide Does not exists, creating an invite')
             token_generator = TokenGenerator(request.data['email'])
             token = token_generator.gettoken()
-            invited_user, created = InvitedUser.objects.get_or_create(email=request.data['email'], token=token,
-                                                                      customer=customer)
-            if created:
-                logger.info('Invite created, sending e-mail')
-                try:
-                    mensagem = {
-                        'empresa': customer.razao_social,
-                        'link': f'https://broker.uni.cloud/auth-register/?token={token}'
-                    }
-                    rendered_email = get_template('email/welcome.html').render(mensagem)
-                    mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
-                    mailer.send_mail()
-                    logger.info('invite sent by e-mail')
-                except Exception as error:
-                    logger.error(error)
-                    return Response(messages.email_notsent, 400)
-        except Exception as error:
-            logger.error(error)
-            return Response(messages.bad_request, 400)
+            invitation = InvitedUser.objects.create(email=request.data['email'], token=token, customer=customer)
+            invitation.save()
 
-        return Response({'status': 'created'})
+            logger.info("Finally sending the invitation email.")
+            mensagem = {
+                'empresa': customer.razao_social,
+                'link': f'https://broker.uni.cloud/auth-register/?token={token}'
+            }
+            rendered_email = get_template('email/welcome.html').render(mensagem)
+            mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
+            mailer.send_mail()
+            logger.info('invite sent by e-mail')
+
+            serializar = InvitedUserListSerializer(invitation)
+            return Response(serializar.data)
 
     def retrieve(self, request):
-        organization = UserCustomer.objects.get(user_id=request.user.id)
-        invited_users_list = InvitedUser.objects.filter(customer_id=organization.customer_id)
-        serializar = InvitedUserListSerializer(invited_users_list, many=True)
+        try:
+            logger.info(request.user.id)
+            organization = UserCustomer.objects.get(user_id=request.user.id)
+            has_invitations = InvitedUser.objects.filter(customer_id=organization.customer_id)
+            serializar = InvitedUserListSerializer(has_invitations, many=True)
+            return Response(serializar.data)
+        except Exception as error:
+            logger.error(error)
+            return Response({'error': error})
 
-        return Response(serializar.data)
 
 class TokenViewSet(viewsets.ViewSet):
 
