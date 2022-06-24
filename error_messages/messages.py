@@ -54,3 +54,45 @@ invite_already_exist = {
         ]
     }
 }
+
+invitation_expires = {
+    'data': {
+        'detail': 'Invite expires',
+        'code': 'The invitation already expires',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'This invitation already expires, please, contact your Sys Admin and request to re-send',
+            }
+        ]
+    }
+}
+
+invalid_invitation = {
+    'data': {
+        'detail': 'Invalid Invite',
+        'code': 'The invitation is invalid',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'This invitation dont exists',
+            }
+        ]
+    }
+}
+
+invitation_doesnt_exists = {
+    'data': {
+        'detail': 'Invitation doesnt exists',
+        'code': 'The invitation doesnt exists',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'This invitation doesnt exists',
+            }
+        ]
+    }
+}
