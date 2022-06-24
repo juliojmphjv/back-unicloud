@@ -168,19 +168,19 @@ class TokenViewSet(viewsets.ViewSet):
             token_generator = TokenGenerator(invite.email)
             token = token_generator.gettoken()
             try:
-                invite.objects.update(token=token)
+                invite.token=token
                 invite.save()
                 mensagem = {
                     'empresa': invite.customer.razao_social,
                     'link': f'https://broker.uni.cloud/auth-register/?token={token}'
                 }
                 rendered_email = get_template('email/welcome.html').render(mensagem)
-                mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
+                mailer = UniCloudMailer(invite.email, 'Bem vindo ao Uni.Cloud Broker', rendered_email)
                 mailer.send_mail()
                 logger.info('invite sent by e-mail')
                 return Response({'status': 'sent'})
             except Exception as error:
                 logger.error(error)
-                return Response(error)
+                return Response({'error': f'Exception {error}'})
         else:
             return Response(messages.invitation_doesnt_exists, 404)
