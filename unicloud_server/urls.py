@@ -44,7 +44,7 @@ urlpatterns = [
     path('customers/', CustomerViewSet.as_view({'post': 'create', 'get': 'list'}), name='customers'),
     path('one-customer/<int:pk>/', OneCustomerViewSet.as_view({'patch': 'partial_update'})),
     path('menu/', MenuViewSet.as_view({'get': 'retrieve'})),
-    path('users/', UsersViewSet.as_view({'get': 'retrieve', 'post':'create_registered_user'})),
+    path('users/', UsersViewSet.as_view({'get': 'retrieve'})),
     path('user-register/', UserRegisterViewSet.as_view({'post': 'user_register'})),
     path('customer-type/', CustomerType.as_view({'get': 'get_type'})),
     path('get-organization/', Organization.as_view({'get': 'get_organization'})),
