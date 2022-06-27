@@ -20,7 +20,7 @@ from unicloud_mailersystem.mailer import UniCloudMailer
 from logs.setup_log import logger
 import datetime
 from django.utils import timezone
-
+import pytz
 
 class UsersViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated, )
@@ -129,8 +129,22 @@ class InviteUsersViewSet(viewsets.ViewSet):
         try:
             logger.info(request.user.id)
             organization = UserCustomer.objects.get(user_id=request.user.id)
-            has_invitations = InvitedUser.objects.filter(customer_id=organization.customer_id)
-            serializar = InvitedUserListSerializer(has_invitations, many=True)
+            invitations = InvitedUser.objects.filter(customer_id=organization.customer_id)
+            for invite in invitations:
+                date_expires = datetime.datetime.strftime(invite.created_at + datetime.timedelta(hours=24),
+                                                          "%Y-%m-%d %H:%M:%S")
+                date_expires = datetime.datetime.strptime(date_expires, '%Y-%m-%d %H:%M:%S')
+                now = timezone.make_naive(timezone.now())
+                logger.info(now)
+                logger.info(date_expires)
+
+                if date_expires > now:
+                    logger.info('pending')
+                    setattr(invite, 'status', 'pending')
+                else:
+                    logger.info('expired')
+                    setattr(invite, 'status', 'expired')
+            serializar = InvitedUserListSerializer(invitations, many=True)
             return Response(serializar.data)
         except Exception as error:
             logger.error(error)
