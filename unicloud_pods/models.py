@@ -11,4 +11,4 @@ class ZadaraPods(models.Model):
     pod_password = models.CharField(max_length=150, null=True)
     domain_tenant = models.CharField(max_length=300, null=True)
     spare_nodes = models.IntegerField(default=0)
-    projetct_id = models.CharField(max_length=50 ,default=None, null=True, blank=True)
+    project_id = models.CharField(max_length=50, default=None, null=True, blank=True)
