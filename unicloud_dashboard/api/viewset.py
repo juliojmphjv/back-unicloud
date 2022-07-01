@@ -20,6 +20,9 @@ class Dashboard(viewsets.ViewSet):
             'customers': [],
             'partners': [],
             'locations': [],
+            'total_spare_nodes': 0,
+            'number_of_pods': 0,
+
         }
         try:
             if requester.is_root():
@@ -28,13 +31,19 @@ class Dashboard(viewsets.ViewSet):
                     customers = Customer.objects.filter(type='customer')
                     partners = Customer.objects.filter(type='partner')
                     zadara_pods = ZadaraPods.objects.all()
+                    dashboard['number_of_pods'] = len(zadara_pods)
                     for customer in customers:
                         dashboard['customers'].append(customer.razao_social)
                     for partner in partners:
                         dashboard['partners'].append(partner.razao_social)
                     for pod in zadara_pods:
                         vendor = Zadara(pod)
-                        dashboard['locations'].append({f'{pod.location}-{pod.name}': vendor.get_pods_geolocation(pod.location)})
+                        dashboard['total_spare_nodes'] = pod.spare_nodes
+                        zadara_data = vendor.get_zadara_pod_sparenodes()
+                        for data in zadara_data:
+                            for key in data.keys():
+                                dashboard[key] = data[key]
+
                     serializer = DashboardSerializer(dashboard)
                     return Response(serializer.data)
                 except Exception as error:

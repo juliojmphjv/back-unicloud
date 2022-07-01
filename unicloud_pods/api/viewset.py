@@ -13,7 +13,7 @@ class ZadaraPodsViewSet(viewsets.ViewSet):
 
     def create(self, request):
         try:
-            new_pod = ZadaraPods.objects.create(name=bleach.clean(request.data['name']), location=bleach.clean(request.data['location']), type=bleach.clean(request.data['type']), url_base=bleach.clean(request.data['url_base']), pod_user=bleach.clean(request.data['pod_user']), pod_password=bleach.clean(request.data['pod_password']))
+            new_pod = ZadaraPods.objects.create(name=bleach.clean(request.data['name']), location=bleach.clean(request.data['location']), type=bleach.clean(request.data['type']), url_base=bleach.clean(request.data['url_base']), pod_user=bleach.clean(request.data['pod_user']), pod_password=bleach.clean(request.data['pod_password']), projetct_id=bleach.clean(request.data['project_id']))
             new_pod.save()
             serializer = UniCloudZadaraPodsSerializer(new_pod)
             return Response(serializer.data)
