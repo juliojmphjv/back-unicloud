@@ -45,10 +45,10 @@ class Zadara:
     def authentication(self):
         try:
             endpoint = "/api/v2/identity/auth"
-            first_response = requests.post(f'{self.url_base}{endpoint}', data=json.dumps(self.first_auth_payload), headers=self.headers)
+            first_response = requests.post(f'{self.url_base}{endpoint}', data=json.dumps(self.first_auth_payload), headers=self.headers, verify=False)
             self.second_auth_payload['auth']['identity']['token']['id'] = first_response.headers['x-subject-token']
 
-            second_response = requests.post(f'{self.url_base}{endpoint}', data=json.dumps(self.second_auth_payload), headers=self.headers)
+            second_response = requests.post(f'{self.url_base}{endpoint}', data=json.dumps(self.second_auth_payload), headers=self.headers, verify=False)
             return second_response.headers['x-subject-token']
         except Exception as error:
             logger.error(error)
@@ -59,7 +59,7 @@ class Zadara:
         endpoint = '/api/v2/nodes?detailed=true'
         try:
             self.headers['x-auth-token'] = token
-            all_nodes = requests.get(f'{self.url_base}{endpoint}', headers=self.headers).json()
+            all_nodes = requests.get(f'{self.url_base}{endpoint}', headers=self.headers, verify=False).json()
             qty_nodes = len(all_nodes)-self.pod.spare_nodes
             memory = []
             cpus = []
