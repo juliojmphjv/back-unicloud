@@ -38,6 +38,7 @@ class Dashboard(viewsets.ViewSet):
                         dashboard['partners'].append(partner.razao_social)
                     for pod in zadara_pods:
                         vendor = Zadara(pod)
+                        dashboard['locations'].append({pod.location: vendor.get_pods_geolocation(pod.location)})
                         dashboard['total_spare_nodes'] = pod.spare_nodes
                         zadara_data = vendor.get_zadara_pod_sparenodes()
                         for data in zadara_data:
