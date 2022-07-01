@@ -17,7 +17,7 @@ from check_root.unicloud_check_root import CheckRoot
 import base64
 from logs.setup_log import logger
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
-
+import filetype
 
 class CustomerViewSet(viewsets.ViewSet):
     permission_classes(IsAuthenticated,)
@@ -104,18 +104,20 @@ class OrganizationLogoViewSet(viewsets.ViewSet):
             customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
             customer = Customer.objects.get(id=customer_id)
             file_uploaded = request.FILES.get('file_uploaded')
-            if customer.type == 'root' or customer.type == 'partner':
-                if OrganizationLogo.objects.filter(organization=customer).exists():
-                    update_logo = OrganizationLogo.objects.get(organization=customer)
-                    update_logo.objects.update(logo=file_uploaded)
-                    update_logo.save()
-                    serializer = LogoSerializer(update_logo)
+            if filetype.is_image(file_uploaded):
+                if customer.type == 'root' or customer.type == 'partner':
+                    if OrganizationLogo.objects.filter(organization=customer).exists():
+                        update_logo = OrganizationLogo.objects.get(organization=customer)
+                        update_logo.objects.update(logo=file_uploaded)
+                        update_logo.save()
+                        serializer = LogoSerializer(update_logo)
+                        return Response(serializer.data)
+                    createlogo = OrganizationLogo.objects.create(logo=file_uploaded, organization=customer)
+                    createlogo.save()
+                    serializer = LogoSerializer(createlogo)
                     return Response(serializer.data)
-                createlogo = OrganizationLogo.objects.create(logo=file_uploaded, organization=customer)
-                createlogo.save()
-                serializer = LogoSerializer(createlogo)
-                return Response(serializer.data)
-            return Response({'error': 'Not Allowed'})
+                return Response({'error': 'Not Allowed'})
+            return Response({'error': 'Its not an image'})
         except Exception as error:
             logger.info(error)
 
