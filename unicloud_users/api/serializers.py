@@ -43,6 +43,8 @@ class UserListSerializer(serializers.Serializer):
     last_name = serializers.CharField(max_length=150)
     email = serializers.EmailField()
     is_active = serializers.BooleanField()
+    last_login = serializers.DateTimeField()
+    date_joined = serializers.DateTimeField()
 
 class InvitedUserListSerializer(serializers.Serializer):
     id = serializers.IntegerField()
