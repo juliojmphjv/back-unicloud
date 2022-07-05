@@ -135,8 +135,6 @@ class InviteUsersViewSet(viewsets.ViewSet):
                                                           "%Y-%m-%d %H:%M:%S")
                 date_expires = datetime.datetime.strptime(date_expires, '%Y-%m-%d %H:%M:%S')
                 now = timezone.make_naive(timezone.now())
-                logger.info(now)
-                logger.info(date_expires)
 
                 if date_expires > now:
                     logger.info('pending')
@@ -160,13 +158,16 @@ class TokenViewSet(viewsets.ViewSet):
                 token_data = InvitedUser.objects.get(token=request.data['token'])
                 date_expires = datetime.datetime.strftime(token_data.created_at + datetime.timedelta(hours=24),
                                                           "%Y-%m-%d %H:%M:%S")
-                if date_expires < timezone.now():
+                date_expires = datetime.datetime.strptime(date_expires, '%Y-%m-%d %H:%M:%S')
+                now = timezone.make_naive(timezone.now())
+
+                if date_expires < now:
                     serializer = InvitedUserSerializer({'id':token_data.id, 'token':token_data.token, 'email':token_data.email, 'razao_social':token_data.customer.razao_social, 'is_valid':True})
                     return Response(serializer.data)
                 else:
                     logger.info(f'Token 24h timedelta expired.'
                                 f'Token created at: {token_data.created_at}'
-                                f'Time was tried to activate: {timezone.now()}')
+                                f'Time was tried to activate: {now}')
                     return Response(messages.invitation_expires, 410)
             except Exception as error:
                 logger.error(error)
