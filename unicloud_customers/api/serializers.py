@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.serializers import Serializer, FileField
 
 
-class  CustomerSerializer(serializers.Serializer):
+class CustomerSerializer(serializers.Serializer):
      id = serializers.IntegerField()
      razao_social = serializers.CharField(max_length=250)
      telefone = serializers.CharField(max_length=300)
