@@ -8,3 +8,5 @@ class UniCloudZadaraPodsSerializer(serializers.Serializer):
     url_base = serializers.CharField(max_length=500)
     pod_user = serializers.CharField(max_length=50)
     pod_password = serializers.CharField(max_length=150)
+    domain_tenant = serializers.CharField(max_length=50)
+    project_id = serializers.CharField(max_length=150)
