@@ -98,6 +98,17 @@ if os.getenv("Djangoenv") == 'True':
             'PORT': '5432',
         }
     }
+elif os.getenv('env') == 'Dev':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.getenv('DBNAME'),
+            'USER': os.getenv('DBUSER'),
+            'PASSWORD': os.getenv('DBPASSWORD'),
+            'HOST': os.getenv('DBHOST'),
+            'PORT': '5432',
+        }
+    }
 else:
     DATABASES = {
         'default': {
@@ -109,7 +120,6 @@ else:
             'PORT': '5432',
         }
     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
