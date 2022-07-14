@@ -223,7 +223,8 @@ CORS_ALLOWED_ORIGINS = [
 APIKEY_MAILGUN = os.getenv('APIKEY_MAILGUN')
 EMAIL_FROM = 'Não Responda <postmaster@uni.cloud>'
 
-CSRF_TRUSTED_ORIGINS = ['https://unicloudbr.azurewebsites.net', 'http://localhost:3000', 'http://127.0.0.1:3000', 'https://unicloud-back-development.azurewebsites.net']
+CSRF_TRUSTED_ORIGINS = ['https://unicloudbr.azurewebsites.net', 'http://localhost:3000', 'http://127.0.0.1:3000', 'https://unicloud-back-development.azurewebsites.net', 'http://localhost:4173']
+
 
 sentry_sdk.init(
     dsn="https://c8b3f8b0f3d549429ff43a568d13096a@o1235247.ingest.sentry.io/6385157",
