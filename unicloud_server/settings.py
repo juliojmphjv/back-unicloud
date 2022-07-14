@@ -98,17 +98,6 @@ if os.getenv("Djangoenv") == 'True':
             'PORT': '5432',
         }
     }
-elif os.getenv('env') == 'Dev':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.getenv('DBNAME'),
-            'USER': os.getenv('DBUSER'),
-            'PASSWORD': os.getenv('DBPASSWORD'),
-            'HOST': os.getenv('DBHOST'),
-            'PORT': '5432',
-        }
-    }
 else:
     DATABASES = {
         'default': {
@@ -120,6 +109,7 @@ else:
             'PORT': '5432',
         }
     }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -230,7 +220,6 @@ else:
     CSRF_TRUSTED_ORIGINS = ['https://broker.uni.cloud']
 
 
-
 sentry_sdk.init(
     dsn="https://c8b3f8b0f3d549429ff43a568d13096a@o1235247.ingest.sentry.io/6385157",
     integrations=[DjangoIntegration()],
@@ -257,4 +246,3 @@ STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
 MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
 
 AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY')
-
