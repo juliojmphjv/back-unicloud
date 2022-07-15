@@ -9,7 +9,7 @@ import bleach
 from logs.setup_log import logger
 
 class ZadaraPodsViewSet(viewsets.ViewSet):
-    permission_classes(IsAdminUser,)
+    permission_classes = (IsAdminUser,)
 
     def create(self, request):
         try:

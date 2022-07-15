@@ -14,7 +14,16 @@ class Contracts(models.Model):
     readjust_cycle = models.IntegerField() #month
     amount = models.DecimalField(max_digits=19, decimal_places=10)
     note = models.TextField()
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    intermediary = models.ForeignKey(Customer, on_delete=models.CASCADE)
     contract = models.FileField(storage=AzureContractsStorage, upload_to=customer_directory_path)
 
+class Intermediary(models.Model):
+    intermediary = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    contract = models.ForeignKey(Contracts, on_delete=models.CASCADE)
+
+class Contractor(models.Model):
+    contractor = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    contract = models.ForeignKey(Contracts, on_delete=models.PROTECT)
+
+class CustomerContracts(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    contract = models.ForeignKey(Contracts, on_delete=models.PROTECT)

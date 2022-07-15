@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from unicloud_server.custom_azure import AzureMediaStorage
-from unicloud_contracts.models import Contracts
 # Create your models here.
 
 class Customer(models.Model):
@@ -56,7 +55,3 @@ class OrganizationLogo(models.Model):
 
     def __str__(self):
         return self.organization.razao_social
-
-class CustomerContracts(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
-    contract = models.ForeignKey(Contracts, on_delete=models.PROTECT)
