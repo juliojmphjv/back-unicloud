@@ -26,3 +26,21 @@ class ContractsViewSet(viewsets.ViewSet):
 
         except Exception as error:
             logger.error(error)
+
+    def retrieve(self, request):
+        try:
+            contracts = Contracts.objects.all()
+            serializer = ContractSerializer(contracts, many=True)
+            return Response(serializer.data)
+        except Exception as error:
+            logger.error(error)
+            return Response({'error': error})
+
+    def delete(self, request):
+        try:
+            contract = Contracts.objects.get(id=request.data['contract_id'])
+            contract.delete()
+            return Response({'status': 'deleted'})
+        except Exception as error:
+            logger.error(error)
+            return Response({'error': error})
