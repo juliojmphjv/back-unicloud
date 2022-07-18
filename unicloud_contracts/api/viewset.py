@@ -11,7 +11,7 @@ class ContractsViewSet(viewsets.ViewSet):
 
     def create(self, request):
         try:
-            contract = Contracts.objects.create(name=request.data['name'], start_date=request.data['start_date'], end_date=request.data['end_date'], term=request.data['term'], readjust_cycle=request.data['readjust_cycle'], amount=request.data['amount'], note=request.data['note'])
+            contract = Contracts.objects.create(name=request.data['name'], start_date=request.data['start_date'], end_date=request.data['end_date'], term=request.data['term'], readjust_cycle=request.data['readjust_cycle'], amount=request.data['amount'], note=request.data['note'], contract=request.FILES.get('file_uploaded'))
             contract.save()
             customer = Customer.objects.get(id=request.data['customer_id'])
             if request.data['intermediary']:
