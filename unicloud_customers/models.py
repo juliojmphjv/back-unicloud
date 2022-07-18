@@ -55,5 +55,3 @@ class OrganizationLogo(models.Model):
 
     def __str__(self):
         return self.organization.razao_social
-
-

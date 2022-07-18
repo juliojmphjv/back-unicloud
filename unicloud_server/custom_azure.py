@@ -12,3 +12,9 @@ class AzureStaticStorage(AzureStorage):
     account_key = settings.AZURE_ACCOUNT_KEY
     azure_container = 'static'
     expiration_secs = None
+
+class AzureContractsStorage(AzureStorage):
+    account_name = 'brokermediastorage'  # Must be replaced by your storage_account_name
+    account_key = settings.AZURE_ACCOUNT_KEY
+    azure_container = 'contracts'
+    expiration_secs = 1800

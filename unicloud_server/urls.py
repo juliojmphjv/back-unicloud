@@ -27,6 +27,8 @@ from unicloud_dashboard.api.viewset import Dashboard
 from unicloud_pods.api.viewset import ZadaraPodsViewSet
 from django.conf.urls.static import static
 from django.conf import settings
+from unicloud_resources.api.viewset import ResourceViewSet, ResourceTypeViewSet
+from unicloud_contracts.api.viewset import ContractsViewSet
 
 
 router = routers.DefaultRouter()
@@ -53,6 +55,9 @@ urlpatterns = [
     path('pods/', ZadaraPodsViewSet.as_view({'get': 'retrieve_list'})),
     path('dashboard/', Dashboard.as_view({'get': 'get_dashboard'})),
     path('update-invitation/', TokenViewSet.as_view({'patch': 'update_invitation'})),
+    path('resources/', ResourceViewSet.as_view({'post': 'create', 'get': 'retrieve', 'delete': 'delete', 'patch': 'update'})),
+    path('resources-type/', ResourceTypeViewSet.as_view({'post': 'create', 'get': 'retrieve', 'patch': 'update'})),
+    path('contracts/', ContractsViewSet.as_view({'post': 'create', 'get': 'retrieve', 'delete': 'delete'}))
 ]
 if settings.DEBUG:
   urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
