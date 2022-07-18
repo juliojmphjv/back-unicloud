@@ -16,6 +16,7 @@ class Contracts(models.Model):
     note = models.TextField()
     contract = models.FileField(storage=AzureContractsStorage, upload_to=customer_directory_path)
 
+
 class Intermediary(models.Model):
     intermediary = models.ForeignKey(Customer, on_delete=models.CASCADE)
     contract = models.ForeignKey(Contracts, on_delete=models.CASCADE)
