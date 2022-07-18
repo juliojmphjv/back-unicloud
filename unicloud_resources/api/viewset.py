@@ -97,7 +97,7 @@ class AssetsViewSet(viewsets.ViewSet):
         try:
             contract = Contracts.objects.get(id=request.data['contract_id'])
             resource = Resource.objects.get(id=request.data['resource_id'])
-            asset = Assets.objects.create(contract=contract, resource=resource)
+            asset = Assets.objects.create(contract=contract, resource=resource, qty=request.data['qty'])
             asset.save()
             serializer = AssetsSerializer(asset)
             return Response(serializer.data)
