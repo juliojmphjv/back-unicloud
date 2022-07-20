@@ -29,6 +29,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from unicloud_resources.api.viewset import ResourceViewSet, ResourceTypeViewSet, AssetsViewSet
 from unicloud_contracts.api.viewset import ContractsViewSet
+from unicloud_sales.api.viewset import OpportunityRegister
 
 
 router = routers.DefaultRouter()
@@ -58,7 +59,8 @@ urlpatterns = [
     path('resources/', ResourceViewSet.as_view({'post': 'create', 'get': 'retrieve', 'delete': 'delete', 'patch': 'update'})),
     path('resources-type/', ResourceTypeViewSet.as_view({'post': 'create', 'get': 'retrieve', 'patch': 'update'})),
     path('contracts/', ContractsViewSet.as_view({'post': 'create', 'get': 'retrieve', 'delete': 'delete'})),
-    path('assets/', AssetsViewSet.as_view({'post': 'create', 'get': 'retrieve'}))
+    path('assets/', AssetsViewSet.as_view({'post': 'create', 'get': 'retrieve'})),
+    path('opportunity-register/', OpportunityRegister.as_view({'post': 'create'}))
 ]
 if settings.DEBUG:
   urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
