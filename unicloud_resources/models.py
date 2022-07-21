@@ -10,6 +10,9 @@ class Resource(models.Model):
     resource_name = models.CharField(max_length=150)
     type = models.ForeignKey(ResourcesType, on_delete=models.CASCADE)
 
+    def natural_key(self):
+        return (self.resource_name)
+
 class Assets(models.Model):
     contract = models.ForeignKey(Contracts, on_delete=models.CASCADE)
     resource = models.ForeignKey(Resource, on_delete=models.PROTECT)

@@ -1,11 +1,15 @@
 from unicloud_sales.models import Opportunity, SalesRelatioshipFlow, ResourceOfOpportunity
 from rest_framework import viewsets
-from rest_framework.permissions import IsPartner
+from rest_framework.permissions import IsPartner, IsRoot
 from unicloud_customers.models import Customer, UserCustomer
 from unicloud_customers.receita_federal import ConsultaReceita
 from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from logs.setup_log import logger
+from unicloud_customers.customers import CustomerObject
+from .serializers import PartnerOpportunitiesListSerializer
+from django.core import serializers
+
 class OpportunityRegister(viewsets.ViewSet):
     permission_classes = (IsPartner,)
 
@@ -51,3 +55,27 @@ class OpportunityRegister(viewsets.ViewSet):
                         resource_of_opportunity.save()
 
                     activity = SalesRelatioshipFlow.objects.create(partner=requester_organization_instance, customer=customer, author=request.user, description=request.data['description'])
+                    activity.save()
+
+    def retrieve(self, request):
+        partner = CustomerObject(request)
+        opportunities = Opportunity.objects.filter(partner=partner.get_customer_object().id)
+        for opportunity in opportunities:
+            opportunity.resources = []
+            opportunity.history = []
+            resources = ResourceOfOpportunity.objects.filter(opportunity=opportunity)
+            for resource in resources:
+                opportunity.resources.append({'resource_name': resource.resource.resource_name, 'resource_id': resource.resource.id})
+            history = SalesRelatioshipFlow.objects.filter(partner=partner.get_customer_object().id, customer=opportunity.customer.id)
+            for activity in history:
+                opportunity.history.append({'author': activity.author.username, 'description': activity.description, 'date': activity.date, 'activity_id': activity.id})
+
+        serializers = PartnerOpportunitiesListSerializer(opportunities, many=True)
+
+        return Response(serializers.data)
+
+class OpportunityReview(viewsets.ViewSet):
+    permission_classes = (IsRoot, )
+
+    def retrieve(self, request):
+        opportunities = Opportunity.objects.all()

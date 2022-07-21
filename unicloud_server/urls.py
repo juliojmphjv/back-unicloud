@@ -60,7 +60,8 @@ urlpatterns = [
     path('resources-type/', ResourceTypeViewSet.as_view({'post': 'create', 'get': 'retrieve', 'patch': 'update'})),
     path('contracts/', ContractsViewSet.as_view({'post': 'create', 'get': 'retrieve', 'delete': 'delete'})),
     path('assets/', AssetsViewSet.as_view({'post': 'create', 'get': 'retrieve'})),
-    path('opportunity-register/', OpportunityRegister.as_view({'post': 'create'}))
+    path('opportunity-register/', OpportunityRegister.as_view({'post': 'create', 'get': 'retrieve'})),
+
 ]
 if settings.DEBUG:
   urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
