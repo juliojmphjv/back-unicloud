@@ -238,13 +238,16 @@ sentry_sdk.init(
 
 DEFAULT_FILE_STORAGE = 'unicloud_server.custom_azure.AzureMediaStorage'
 STATICFILES_STORAGE = 'unicloud_server.custom_azure.AzureStaticStorage'
+CONTRACTS_FILE_STORAGE = 'unicloud_server.custom_azure.AzureContractsStorage'
 
 STATIC_LOCATION = "static"
 MEDIA_LOCATION = "media"
+CONTRACTS_LOCATION = "contracts"
 
 AZURE_ACCOUNT_NAME = "brokermediastorage"
 AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
 STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
 MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
+CONTRACTS_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{CONTRACTS_LOCATION}/'
 
 AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY')

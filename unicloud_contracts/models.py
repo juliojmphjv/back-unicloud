@@ -1,7 +1,10 @@
 from django.db import models
 from unicloud_customers.models import Customer
 from unicloud_server.custom_azure import AzureContractsStorage
+from logs.setup_log import logger
 # Create your models here.
+
+
 
 def customer_directory_path(instance, filename):
     return '{0}/{1}'.format(instance, filename)
@@ -16,15 +19,14 @@ class Contracts(models.Model):
     note = models.TextField()
     contract = models.FileField(storage=AzureContractsStorage, upload_to=customer_directory_path)
 
+    def __str__(self):
+        return self.name
+
+class ContractParty(models.Model):
+    contractor = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='organization_contractor')
+    hired = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='organization_hired')
+    contract = models.ForeignKey(Contracts, on_delete=models.PROTECT)
 
 class Intermediary(models.Model):
     intermediary = models.ForeignKey(Customer, on_delete=models.CASCADE)
     contract = models.ForeignKey(Contracts, on_delete=models.CASCADE)
-
-class Contractor(models.Model):
-    contractor = models.ForeignKey(Customer, on_delete=models.PROTECT)
-    contract = models.ForeignKey(Contracts, on_delete=models.PROTECT)
-
-class CustomerContracts(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
-    contract = models.ForeignKey(Contracts, on_delete=models.PROTECT)
