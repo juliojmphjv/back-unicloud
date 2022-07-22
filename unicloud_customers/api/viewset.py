@@ -1,26 +1,23 @@
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from django.contrib.auth.models import User
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsPartner, IsRoot, IsCustomer
 from ..models import InvitedUser, Customer, UserCustomer, CustomerRelationship, OrganizationLogo
 from .serializers import CustomerSerializer, CustomerTypeSerializer, LogoSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 from ..receita_federal import ConsultaReceita
-from rest_framework.decorators import action, permission_classes
+from rest_framework.decorators import permission_classes
 from error_messages import messages
-from rest_framework.renderers import JSONRenderer
 from django.template.loader import get_template
 from unicloud_tokengenerator.generator import TokenGenerator
 from unicloud_mailersystem.mailer import UniCloudMailer
-from django.shortcuts import get_object_or_404
 from check_root.unicloud_check_root import CheckRoot
-import base64
 from logs.setup_log import logger
-from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
+from rest_framework.parsers import FileUploadParser
 import filetype
 
+
 class CustomerViewSet(viewsets.ViewSet):
-    permission_classes(IsAuthenticated,)
+    permission_classes(IsPartner,)
+
     def create(self, request):
         response = None
         status = None

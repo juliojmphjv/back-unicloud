@@ -1,7 +1,7 @@
 import json
 import sys
 import urllib.request
-
+from logs.setup_log import logger
 class ConsultaReceita:
 
     def __init__(self, cnpj):
@@ -12,6 +12,7 @@ class ConsultaReceita:
 
         cnpj = self.__parse_input()
         if len(cnpj) != 14 or not cnpj.isnumeric():
+            logger.error(f'cnpj not numeric or less than 14 digit')
             return False
 
         verificadores = cnpj[-2:]
@@ -34,6 +35,7 @@ class ConsultaReceita:
         soma = soma % 11
         digito_dois = 0 if soma < 2 else 11 - soma
 
+        logger.info(f'validation result: {verificadores == str(digito_um) + str(digito_dois)}')
         return verificadores == str(digito_um) + str(digito_dois)
 
     def __parse_input(self):
@@ -44,6 +46,7 @@ class ConsultaReceita:
         cnpj = cnpj.replace('/', '')
         cnpj = cnpj.replace('-', '')
         cnpj = cnpj.replace('\\', '')
+        logger.info(cnpj)
         return cnpj
 
     def __consulta_cnpj(self):
@@ -57,8 +60,11 @@ class ConsultaReceita:
             content = fd.read().decode()
 
         dic = json.loads(content)
-
+        logger.info(f'dic is: {dic}')
         return dic
+
+    def cnpj_isvalid(self):
+        return (True, self.__consulta_cnpj()['message']) if not self.__consulta_cnpj()['status'] else False
 
     def get_data(self):
         return self.__consulta_cnpj()
