@@ -1,13 +1,14 @@
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from unicloud_customers.customer_permissions import IsRoot
 from ..models import Contracts, Intermediary, ContractParty
 from unicloud_customers.models import Customer
 from logs.setup_log import logger
 from .serializers import ContractSerializer
 from rest_framework.response import Response
+from rest_framework.decorators import permission_classes
 
 class ContractsViewSet(viewsets.ViewSet):
-    permission_classes = (IsAdminUser,)
+    permission_classes = (IsRoot, )
 
     def create(self, request):
         try:

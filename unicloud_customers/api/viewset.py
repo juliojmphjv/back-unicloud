@@ -1,4 +1,5 @@
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsPartner, IsRoot, IsCustomer
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from unicloud_customers.customer_permissions import IsCustomer, IsPartner, IsRoot
 from ..models import InvitedUser, Customer, UserCustomer, CustomerRelationship, OrganizationLogo
 from .serializers import CustomerSerializer, CustomerTypeSerializer, LogoSerializer
 from rest_framework import viewsets
@@ -16,7 +17,7 @@ import filetype
 
 
 class CustomerViewSet(viewsets.ViewSet):
-    permission_classes(IsPartner,)
+    permission_classes = (IsPartner,)
 
     def create(self, request):
         response = None
@@ -69,7 +70,7 @@ class CustomerViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 class OneCustomerViewSet(viewsets.ViewSet):
-    permission_classes(IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     def partial_update(self, request, pk):
         if request.user.is_superuser and request.user.is_staff and request.user.is_authenticated:
             customer = Customer.objects.filter(pk=pk)
@@ -95,6 +96,7 @@ class Organization(viewsets.ViewSet):
         return Response(serializer.data)
 
 class OrganizationLogoViewSet(viewsets.ViewSet):
+    permission_classes = (IsCustomer, )
     serializer_class = LogoSerializer
     def create(self, request):
         try:
