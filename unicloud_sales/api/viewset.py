@@ -7,8 +7,9 @@ from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from logs.setup_log import logger
 from unicloud_customers.customers import CustomerObject
-from .serializers import PartnerOpportunitiesListSerializer
+from .serializers import OpportunitySerializer, OneOpportunitySerializer
 from django.core import serializers
+from error_messages import messages
 
 class OpportunityRegister(viewsets.ViewSet):
     permission_classes = (IsPartner,)
@@ -45,37 +46,98 @@ class OpportunityRegister(viewsets.ViewSet):
                 logger.info(f'requester org instance: {requester_organization_instance}')
                 customer = Customer.objects.get(cnpj=request.data['cnpj'])
                 logger.info(f'getting the customer: {customer}')
-                if not Opportunity.objects.filter(partner=requester_organization_instance, customer=customer, status='opportunity_pending'):
-                    opportunity = Opportunity.objects.create(partner=requester_organization_instance, customer=customer, opportunity_description=request.data['description'], user=request.user)
+                if not Opportunity.objects.filter(partner=requester_organization_instance, customer=customer, status__in=['opportunity_pending', 'approved']):
+                    logger.info('Creating the opportunity...')
+                    opportunity = Opportunity.objects.create(opportunity_name=['opportunity_name'], partner=requester_organization_instance, customer=customer, opportunity_description=request.data['description'], user=request.user)
                     opportunity.save()
                     logger.info('Opportunity request created.')
 
-                    for resource in request.data['resources_ids']:
-                        resource_of_opportunity = ResourceOfOpportunity.objects.create(resource_id=resource, opportunity=opportunity)
-                        resource_of_opportunity.save()
+                    try:
+                        logger.info('Creating the opportunity resources...')
+                        for resource in request.data['resources_ids']:
+                            resource_of_opportunity = ResourceOfOpportunity.objects.create(resource_id=resource, opportunity=opportunity)
+                            resource_of_opportunity.save()
+                        logger.info('resources created')
+                    except Exception as error:
+                        logger.error(error)
 
-                    activity = SalesRelatioshipFlow.objects.create(partner=requester_organization_instance, customer=customer, author=request.user, description=request.data['description'])
-                    activity.save()
+                    try:
+                        logger.info('creating the activity in sales flow history')
+                        activity = SalesRelatioshipFlow.objects.create(partner=requester_organization_instance, customer=customer, author=request.user, description=request.data['description'])
+                        activity.save()
+                        logger.info(f'sales flow history created {activity}')
+                    except Exception as error:
+                        logger.error(error)
+                else: logger.error('this partner already have an opportunity in this customer pending or approved')
+            else: logger.error('Error in customer Get or Creation')
 
     def retrieve(self, request):
-        partner = CustomerObject(request)
-        opportunities = Opportunity.objects.filter(partner=partner.get_customer_object().id)
+        organization = CustomerObject(request)
+        opportunities = None
+        if organization.get_customer_object().type == 'root':
+            opportunities = Opportunity.objects.all()
+        elif organization.get_customer_object().type == 'partner':
+            opportunities = Opportunity.objects.filter(partner=organization.get_customer_object().id)
+
         for opportunity in opportunities:
             opportunity.resources = []
-            opportunity.history = []
             resources = ResourceOfOpportunity.objects.filter(opportunity=opportunity)
             for resource in resources:
                 opportunity.resources.append({'resource_name': resource.resource.resource_name, 'resource_id': resource.resource.id})
-            history = SalesRelatioshipFlow.objects.filter(partner=partner.get_customer_object().id, customer=opportunity.customer.id)
-            for activity in history:
-                opportunity.history.append({'author': activity.author.username, 'description': activity.description, 'date': activity.date, 'activity_id': activity.id})
 
-        serializers = PartnerOpportunitiesListSerializer(opportunities, many=True)
+        serializers = OpportunitySerializer(opportunities, many=True)
 
         return Response(serializers.data)
 
-class OpportunityReview(viewsets.ViewSet):
+class OneOpportunity(viewsets.ViewSet):
+    permission_classes(IsPartner, )
+
+    def get_one_opportunity(self, request):
+        try:
+            organization = CustomerObject(request)
+            opportunity = Opportunity.objects.get(id=request.data['opportunity_id'])
+
+            if opportunity.partner.id == organization.get_customer_object().id:
+                opportunity.resources = []
+                resources = ResourceOfOpportunity.objects.filter(opportunity=opportunity)
+                for resource in resources:
+                    opportunity.resources.append(
+                        {'resource_name': resource.resource.resource_name, 'resource_id': resource.resource.id})
+                opportunity.history = []
+                history = None
+                if organization.get_customer_object().type == 'root':
+                    history = SalesRelatioshipFlow.objects.filter(customer=opportunity.customer, opportunity=opportunity)
+                elif organization.get_customer_object().type == 'partner':
+                    history = SalesRelatioshipFlow.objects.filter(partner=organization.get_customer_object(), customer=opportunity.customer, opportunity=opportunity)
+                for activity in history:
+                    opportunity.history.append(activity)
+                serializer = OneOpportunitySerializer(opportunity)
+                return Response(serializer.data)
+            else:
+                logger.error('This organizations is not the opportunity owner')
+                return Response(messages.permission_denied)
+        except Exception as error:
+            logger.error(error)
+            return Response({'error': error})
+
+
+
+
+class OpportunityStatus(viewsets.ViewSet):
     permission_classes = (IsRoot, )
 
-    def retrieve(self, request):
-        opportunities = Opportunity.objects.all()
+    def set_opportunity_status(self, request):
+        try:
+            opportunity = Opportunity.objects.get(id=request.data['opportunity_id'])
+            opportunity.status = request.data['new_status']
+            opportunity.save()
+            resources = ResourceOfOpportunity.objects.filter(opportunity=opportunity)
+            opportunity.resources = []
+            for resource in resources:
+                opportunity.resources.append(
+                    {'resource_name': resource.resource.resource_name, 'resource_id': resource.resource.id})
+            serializer = OpportunitySerializer(opportunity)
+            return Response(serializer.data)
+        except Exception as error:
+            logger.error(error)
+            return Response({'error': error})

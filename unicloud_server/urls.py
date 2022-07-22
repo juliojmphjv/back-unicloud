@@ -62,6 +62,15 @@ urlpatterns = [
     path('assets/', AssetsViewSet.as_view({'post': 'create', 'get': 'retrieve'})),
     path('opportunity-register/', OpportunityRegister.as_view({'post': 'create', 'get': 'retrieve'})),
 
+
+
+
+    #Root Routes.
+    path('root/', include('unicloud_server.root_urls')),
+
+    #Partners Routes
+    path('partner/', include('unicloud_server.partner_urls')),
+
 ]
 if settings.DEBUG:
   urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
