@@ -1,6 +1,6 @@
 from unicloud_sales.models import Opportunity, SalesRelatioshipFlow, ResourceOfOpportunity
 from rest_framework import viewsets
-from rest_framework.permissions import IsPartner, IsRoot
+from unicloud_customers.customer_permissions import IsPartner, IsRoot
 from unicloud_customers.models import Customer, UserCustomer
 from unicloud_customers.receita_federal import ConsultaReceita
 from rest_framework.decorators import action, permission_classes
