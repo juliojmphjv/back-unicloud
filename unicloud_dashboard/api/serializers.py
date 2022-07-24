@@ -1,12 +1,16 @@
 from rest_framework import serializers
 
-class DashboardSerializer(serializers.Serializer):
-    customers = serializers.JSONField()
-    partners = serializers.JSONField()
-    locations = serializers.JSONField()
+class PodSerializer(serializers.Serializer):
+    pod_name = serializers.CharField(max_length=15)
+    location = serializers.JSONField()
     total_spare_nodes = serializers.IntegerField()
     number_of_pods = serializers.IntegerField()
     total_nodes = serializers.IntegerField()
     total_memory = serializers.IntegerField()
     total_fisical_cpu = serializers.IntegerField()
     total_vcores = serializers.IntegerField()
+
+class DashboardSerializer(serializers.Serializer):
+    customers = serializers.JSONField()
+    partners = serializers.JSONField()
+    pods = PodSerializer(required=True, many=True)
