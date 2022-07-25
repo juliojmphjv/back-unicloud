@@ -23,7 +23,7 @@ class RootDashboard(viewsets.ViewSet):
             logger.info('in try')
             organization = CustomerObject(request).get_customer_object()
             logger.info(f'getting org: {organization}')
-            customers = Customer.objects.filter(type='customers')
+            customers = Customer.objects.filter(type='customer')
             logger.info(f'lista de customers: {customers}')
             partners = Customer.objects.filter(type='partner')
             logger.info(f'lista de partners: {partners}')
@@ -69,8 +69,12 @@ class RootDashboard(viewsets.ViewSet):
                 dashboard['total_pods'] = len(pods)
                 dashboard['total_spare_nodes'] = sum(total_allpods_sparenodes)
 
-            dashboard['customers'] = customers
-            dashboard['partners'] = partners
+            if customers:
+                for customer in customers:
+                    dashboard['customers'].append(customer.razao_social)
+            if partners:
+                for partner in partners:
+                    dashboard['partners'].append(partner.razao_social)
 
             logger.info(f'Final Dash: {dashboard}')
 
