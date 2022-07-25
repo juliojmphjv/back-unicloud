@@ -1,5 +1,5 @@
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.decorators import action, permission_classes
+from unicloud_customers.customer_permissions import IsCustomer, IsRoot, IsPartner
 from rest_framework.response import Response
 from rest_framework import viewsets
 from django.contrib.auth.models import User
@@ -9,51 +9,60 @@ from unicloud_pods.models import ZadaraPods
 from unicloud_customers.models import Customer
 from check_root.unicloud_check_root import CheckRoot
 from .serializers import DashboardSerializer
-from unicloud_pods.zadara import Zadara
+from unicloud_pods.zadara.zadara import Zadara
+from unicloud_customers.customers import CustomerObject
+from unicloud_customers.models import CustomerRelationship
+from unicloud_dashboard.dashboards.zadara_dash import ZadaraDashboard
+from unicloud_dashboard.factory.factory import DashboardFactory
 
-class Dashboard(viewsets.ViewSet):
-    permission_classes(IsAuthenticated, )
+class RootDashboard(viewsets.ViewSet):
+    permission_classes = (IsRoot,)
 
     def get_dashboard(self, request):
-        requester = CheckRoot(request)
-        dashboard = {
-            'customers': [],
-            'partners': [],
-            'locations': [],
-            'total_spare_nodes': 0,
-            'number_of_pods': 0,
-
-        }
         try:
-            if requester.is_root():
-                logger.info('Requester is root')
-                try:
-                    customers = Customer.objects.filter(type='customer')
-                    partners = Customer.objects.filter(type='partner')
-                    zadara_pods = ZadaraPods.objects.all()
-                    dashboard['number_of_pods'] = len(zadara_pods)
-                    for customer in customers:
-                        dashboard['customers'].append(customer.razao_social)
-                    for partner in partners:
-                        dashboard['partners'].append(partner.razao_social)
-                    for pod in zadara_pods:
-                        vendor = Zadara(pod)
-                        dashboard['locations'].append({pod.location: vendor.get_pods_geolocation(pod.location)})
-                        dashboard['total_spare_nodes'] = pod.spare_nodes
-                        zadara_data = vendor.get_zadara_pod_sparenodes()
-                        for data in zadara_data:
-                            for key in data.keys():
-                                dashboard[key] = data[key]
+            organization = CustomerObject(request).get_customer_object()
+            customers = Customer.objects.filter(type='customers')
+            partners = Customer.objects.filter(type='partner')
+            pods = ZadaraPods.objects.all()
+            dashboard = {
+                'customers': [],
+                'partners': [],
+                'pods': [],
+            }
 
-                    serializer = DashboardSerializer(dashboard)
-                    return Response(serializer.data)
-                except Exception as error:
-                    serializer = DashboardSerializer(dashboard)
-                    logger.error(error)
-                    return Response(serializer.errors)
-            logger.info(requester.is_root())
-            return Response({'dashboard': 'User Dashboard hasnt data available'})
+            if pods:
+                for pod in pods:
+                    engenheiro = DashboardFactory(pod.name)
+                    zad = ZadaraDashboard(pod, organization)
+                    dashboard['pods'].append(engenheiro.get_dasboard(zad))
+                    logger.info(dashboard)
+
+            dashboard['customers'] = customers
+            dashboard['partners'] = partners
+
+            logger.info(dashboard)
+
+            serializer = DashboardSerializer(dashboard)
+            return Response(serializer.data)
         except Exception as error:
             logger.error(error)
-            return Response({'error': error})
 
+class PartnerDashboard(viewsets.ViewSet):
+    permission_classes = (IsPartner, )
+
+    def get_dashboard(self, request):
+        try:
+            return Response({'status': 'doesnt have data'})
+        except Exception as error:
+            logger.error(error)
+            return Response({'erro': 'erro'})
+
+class CustomerDashboard(viewsets.ViewSet):
+    permission_classes = (IsPartner, )
+
+    def get_dashboard(self, request):
+        try:
+            return Response({'status': 'doesnt have data'})
+        except Exception as error:
+            logger.error(error)
+            return Response({'erro': 'erro'})
