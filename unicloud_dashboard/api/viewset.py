@@ -20,10 +20,16 @@ class RootDashboard(viewsets.ViewSet):
 
     def get_dashboard(self, request):
         try:
+            logger.info('in try')
             organization = CustomerObject(request).get_customer_object()
+            logger.info(f'getting org: {organization}')
             customers = Customer.objects.filter(type='customers')
+            logger.info(f'lista de customers: {customers}')
             partners = Customer.objects.filter(type='partner')
+            logger.info(f'lista de partners: {partners}')
+
             pods = ZadaraPods.objects.all()
+            logger.info(f'Getting pods: {pods}')
             dashboard = {
                 'customers': [],
                 'partners': [],
@@ -35,6 +41,7 @@ class RootDashboard(viewsets.ViewSet):
                 'total_pods': 0,
                 'total_spare_nodes': 0,
             }
+            logger.info(dashboard)
             total_allpods_memory = []
             total_allpods_cpus = []
             total_allpods_vcores = []
@@ -42,10 +49,13 @@ class RootDashboard(viewsets.ViewSet):
             total_allpods_sparenodes = []
 
             if pods:
+                logger.info('has Pods')
                 for pod in pods:
+                    logger.info(f'in pod: {pod.name}')
                     engenheiro = DashboardFactory(pod.name)
                     zadara = ZadaraDashboard(pod, organization)
                     pod_data = engenheiro.get_dasboard(zadara)
+                    logger.info(f'pod data: {pod_data}')
                     dashboard['pods'].append(pod_data)
                     total_allpods_memory.append(pod_data['total_memory'])
                     total_allpods_cpus.append(pod_data['total_physical_cpu'])
@@ -61,6 +71,8 @@ class RootDashboard(viewsets.ViewSet):
 
             dashboard['customers'] = customers
             dashboard['partners'] = partners
+
+            logger.info(f'Final Dash: {dashboard}')
 
             serializer = DashboardSerializer(dashboard)
             return Response(serializer.data)
