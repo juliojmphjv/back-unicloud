@@ -1,5 +1,6 @@
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from unicloud_customers.customer_permissions import IsCustomer, IsPartner, IsRoot
+from unicloud_customers.customers import CustomerObject
 from ..models import InvitedUser, Customer, UserCustomer, CustomerRelationship, OrganizationLogo
 from .serializers import CustomerSerializer, CustomerTypeSerializer, LogoSerializer
 from rest_framework import viewsets
@@ -122,8 +123,8 @@ class OrganizationLogoViewSet(viewsets.ViewSet):
 
     def get_logo(self, request):
         try:
-            customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
-            customer = Customer.objects.get(id=customer_id)
+            customer_obj = CustomerObject(request)
+            customer = customer_obj.get_customer_object()
             if customer.type == 'customer':
                 logger.info('Requester is a customer')
                 relationship = CustomerRelationship.objects.get(customer_id=customer.id)
