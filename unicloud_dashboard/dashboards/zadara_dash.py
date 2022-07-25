@@ -53,7 +53,7 @@ class ZadaraDashboard(DashboardInterface):
         spare_memory = (sum(self.memories) / len(self.allnodes)) * self.pod.spare_nodes
         return ((sum(self.memories) - spare_memory) / (1024 ** 3)) * 0.9
 
-    def __cpu_mem_data_process(self) -> int:
+    def __cpu_mem_data_process(self):
         for node in self.allnodes:
             self.memories.append(node['total_memory_b'])
             self.cpus.append(len(node['cpus']))
