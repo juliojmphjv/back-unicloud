@@ -217,7 +217,7 @@ EMAIL_FROM = 'Não Responda <postmaster@uni.cloud>'
 
 #CSRF Authorization verification.
 if os.getenv('env') == 'dev':
-    CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:4173']
+    CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:4173', 'https://unicloud-back-development.azurewebsites.net']
 else:
     CSRF_TRUSTED_ORIGINS = ['https://broker.uni.cloud']
 
