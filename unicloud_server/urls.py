@@ -23,7 +23,7 @@ from rest_framework_simplejwt.views import (
 from rest_framework import routers
 from unicloud_users.api.viewsets import MyTokenObtainPairView, UsersViewSet, MenuViewSet, InviteUsersViewSet, TokenViewSet, UserRegisterViewSet
 from unicloud_customers.api.viewset import CustomerViewSet, OneCustomerViewSet, CustomerType, Organization, OrganizationLogoViewSet
-from unicloud_dashboard.api.viewset import Dashboard
+from unicloud_dashboard.api.viewset import CustomerDashboard
 from unicloud_pods.api.viewset import ZadaraPodsViewSet
 from django.conf.urls.static import static
 from django.conf import settings
@@ -54,7 +54,7 @@ urlpatterns = [
     path('organization-logo/', OrganizationLogoViewSet.as_view({'post': 'create', 'get': 'get_logo'})),
     path('create-zadara-pod/', ZadaraPodsViewSet.as_view({'post': 'create'})),
     path('pods/', ZadaraPodsViewSet.as_view({'get': 'retrieve_list'})),
-    path('dashboard/', Dashboard.as_view({'get': 'get_dashboard'})),
+    path('dashboard/', CustomerDashboard.as_view({'get': 'get_dashboard'})),
     path('update-invitation/', TokenViewSet.as_view({'patch': 'update_invitation'})),
     path('resources/', ResourceViewSet.as_view({'post': 'create', 'get': 'retrieve', 'delete': 'delete', 'patch': 'update'})),
     path('resources-type/', ResourceTypeViewSet.as_view({'post': 'create', 'get': 'retrieve', 'patch': 'update'})),

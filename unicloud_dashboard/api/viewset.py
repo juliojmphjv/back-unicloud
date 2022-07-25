@@ -47,24 +47,22 @@ class RootDashboard(viewsets.ViewSet):
         except Exception as error:
             logger.error(error)
 
-class Dashboard(viewsets.ViewSet):
+class PartnerDashboard(viewsets.ViewSet):
     permission_classes = (IsPartner, )
 
     def get_dashboard(self, request):
         try:
-            organization = CustomerObject(request).get_customer_object()
-            customers_relationhips = CustomerRelationship.objects.filter(partner=organization)
-            customers_ids = []
-            for customer in customers_relationhips:
-                customers_ids.append(customer.id)
-            customers = Customer.objects.filter(customer__partner_id__in=customers_ids)
-            logger.info(customers)
-            # dashboard = {
-            #     'customers': customers,
-            # }
+            return Response({'status': 'doesnt have data'})
+        except Exception as error:
+            logger.error(error)
+            return Response({'erro': 'erro'})
 
-            # logger.info(dashboard)
-            return Response({'teste':'teste'})
+class CustomerDashboard(viewsets.ViewSet):
+    permission_classes = (IsPartner, )
+
+    def get_dashboard(self, request):
+        try:
+            return Response({'status': 'doesnt have data'})
         except Exception as error:
             logger.error(error)
             return Response({'erro': 'erro'})
