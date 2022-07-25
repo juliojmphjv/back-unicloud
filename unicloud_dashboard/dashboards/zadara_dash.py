@@ -17,10 +17,9 @@ class ZadaraDashboard(DashboardInterface):
         self.dashboard = {
             'pod_name': '',
             'total_spare_nodes': 0,
-            'number_of_pods': 0,
             'total_nodes': 0,
             'total_memory': 0,
-            'total_fisical_cpu': 0,
+            'total_physical_cpu': 0,
             'total_vcores': 0,
             'location': [],
         }
@@ -77,7 +76,7 @@ class ZadaraDashboard(DashboardInterface):
         self.dashboard['total_spare_nodes'] = self.pod.spare_nodes
         self.dashboard['total_nodes'] = self.__get_total_nodes()
         self.dashboard['total_memory'] = self.__get_total_memory()
-        self.dashboard['total_fisical_cpu'] = self.__get_total_total_fisical_cpu()
+        self.dashboard['total_physical_cpu'] = self.__get_total_total_fisical_cpu()
         self.dashboard['total_vcores'] = self.__get_total_virtual_cores()
         self.dashboard['pod_name'] = self.pod.name
 
