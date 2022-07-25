@@ -77,9 +77,10 @@ class RootDashboard(viewsets.ViewSet):
             try:
                 serializer = DashboardSerializer(dashboard)
                 logger.info(f'Dash serialized: {serializer.data}')
+                return Response(serializer.data)
             except Exception as error:
                 logger.error(error)
-            return Response(serializer.data)
+
         except Exception as error:
             logger.error(error)
 
