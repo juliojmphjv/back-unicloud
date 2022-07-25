@@ -49,7 +49,6 @@ class RootDashboard(viewsets.ViewSet):
                     dashboard['pods'].append(pod_data)
                     total_allpods_memory.append(pod_data['total_memory'])
                     total_allpods_cpus.append(pod_data['total_physical_cpu'])
-                    logger.info(pod_data['total_physical_cpu'])
                     total_allpods_vcores.append(pod_data['total_vcores'])
                     total_allpods_nodes.append(pod_data['total_nodes'])
                     total_allpods_sparenodes.append(pod_data['total_spare_nodes'])
@@ -60,12 +59,8 @@ class RootDashboard(viewsets.ViewSet):
                 dashboard['total_pods'] = len(pods)
                 dashboard['total_spare_nodes'] = sum(total_allpods_sparenodes)
 
-
-
             dashboard['customers'] = customers
             dashboard['partners'] = partners
-
-            logger.info(dashboard)
 
             serializer = DashboardSerializer(dashboard)
             return Response(serializer.data)
