@@ -10,33 +10,41 @@ from unicloud_customers.customers import CustomerObject
 from .serializers import OpportunitySerializer, OneOpportunitySerializer
 from django.core import serializers
 from error_messages import messages
+from unicloud_customers.receita_federal import ConsultaReceita
 
 class OpportunityRegister(viewsets.ViewSet):
     permission_classes = (IsPartner,)
 
     def create(self, request):
-        creation_status = None
+        creation_status = False
+        cnpj = None
+        customer_data = None
+        customer_id = None
         try:
-            Customer.objects.get(cnpj=request.data['cnpj'])
+            consulta_receitafederal = ConsultaReceita(request.data['cnpj'])
+            customer_data = consulta_receitafederal.get_data()
+            cnpj = consulta_receitafederal.get_parsed()
+        except Exception as error:
+            logger.error(error)
+
+        try:
+            Customer.objects.get(cnpj=cnpj)
             creation_status = True
-            logger.info('Customer already exists.')
-            return Response({'Status': 'Customer already exists in our base, creating the opportunity request.'})
+            logger.error('Customer already exists, creating the opportunity')
+            return Response({'status': 'Customer already exists, creating the opportunity'}, 200)
         except Customer.DoesNotExist:
             logger.info('Customer doesnt exist, creating the customer')
-            logger.info(ConsultaReceita(request.data['cnpj']))
-            consulta_receita = ConsultaReceita(request.data['cnpj'])
 
-            if consulta_receita.get_data()['status'] != 'ERROR':
-                consulta_receitafederal = ConsultaReceita(request.data['cnpj'])
-                customer_data = consulta_receitafederal.get_data()
+            if customer_data['status'] != 'ERROR':
                 logger.info(f'org data from receita: {customer_data}')
-                the_customer = Customer.objects.create(razao_social=customer_data['nome'], telefone=customer_data['telefone'], email=customer_data['email'], bairro=customer_data['bairro'], logradouro=customer_data['logradouro'], numero=customer_data['numero'], cep=customer_data['cep'], municipio=customer_data['municipio'], nome_fantasia=customer_data['fantasia'], natureza_juridica=customer_data['natureza_juridica'], estado=customer_data['uf'], cnpj=customer_data['cnpj'], type='customer')
-                the_customer.save()
+                customer = Customer.objects.create(razao_social=customer_data['nome'], telefone=customer_data['telefone'], email=customer_data['email'], bairro=customer_data['bairro'], logradouro=customer_data['logradouro'], numero=customer_data['numero'], cep=customer_data['cep'], municipio=customer_data['municipio'], nome_fantasia=customer_data['fantasia'], natureza_juridica=customer_data['natureza_juridica'], estado=customer_data['uf'], cnpj=cnpj, type='customer')
+                customer.save()
+                customer_id = customer.id
                 creation_status = True
                 logger.info('Customer Created!')
                 return Response({'Status': 'Customer created, creating the opportunity request.'})
             creation_status = False
-            return Response(consulta_receita.get_data())
+            return Response(customer_data)
         finally:
             if creation_status:
                 logger.info('Creating the opportunity request')
@@ -44,31 +52,31 @@ class OpportunityRegister(viewsets.ViewSet):
                 logger.info(f'requester org id: {requester_organzation_id}')
                 requester_organization_instance = Customer.objects.get(id=requester_organzation_id)
                 logger.info(f'requester org instance: {requester_organization_instance}')
-                customer = Customer.objects.get(cnpj=request.data['cnpj'])
+                customer = Customer.objects.get(cnpj=cnpj)
                 logger.info(f'getting the customer: {customer}')
-                if not Opportunity.objects.filter(partner=requester_organization_instance, customer=customer, status__in=['opportunity_pending', 'approved']):
-                    logger.info('Creating the opportunity...')
-                    opportunity = Opportunity.objects.create(opportunity_name=['opportunity_name'], partner=requester_organization_instance, customer=customer, opportunity_description=request.data['description'], user=request.user)
-                    opportunity.save()
-                    logger.info('Opportunity request created.')
 
-                    try:
-                        logger.info('Creating the opportunity resources...')
-                        for resource in request.data['resources_ids']:
-                            resource_of_opportunity = ResourceOfOpportunity.objects.create(resource_id=resource, opportunity=opportunity)
-                            resource_of_opportunity.save()
-                        logger.info('resources created')
-                    except Exception as error:
-                        logger.error(error)
+                logger.info('Creating the opportunity...')
+                opportunity = Opportunity.objects.create(opportunity_name=['opportunity_name'], partner=requester_organization_instance, customer=customer, opportunity_description=request.data['description'], user=request.user)
+                opportunity.save()
+                logger.info('Opportunity request created.')
 
-                    try:
-                        logger.info('creating the activity in sales flow history')
-                        activity = SalesRelatioshipFlow.objects.create(partner=requester_organization_instance, customer=customer, author=request.user, description=request.data['description'])
-                        activity.save()
-                        logger.info(f'sales flow history created {activity}')
-                    except Exception as error:
-                        logger.error(error)
-                else: logger.error('this partner already have an opportunity in this customer pending or approved')
+                try:
+                    logger.info('Creating the opportunity resources...')
+                    for resource in request.data['resources_ids']:
+                        resource_of_opportunity = ResourceOfOpportunity.objects.create(resource_id=resource, opportunity=opportunity)
+                        resource_of_opportunity.save()
+                    logger.info('resources created')
+                except Exception as error:
+                    logger.error(error)
+
+                try:
+                    logger.info('creating the activity in sales flow history')
+                    activity = SalesRelatioshipFlow.objects.create(partner=requester_organization_instance, customer=customer, author=request.user, description=request.data['description'])
+                    activity.save()
+                    logger.info(f'sales flow history created {activity}')
+                except Exception as error:
+                    logger.error(error)
+
             else: logger.error('Error in customer Get or Creation')
 
     def retrieve(self, request):
