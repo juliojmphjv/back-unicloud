@@ -43,13 +43,27 @@ bad_request = {
 
 invite_already_exist = {
     'data': {
-        'detail': 'Already Exists',
+        'detail': 'Invite Already Exists',
         'code': 'try_to_create_a_register_who_exists',
         'messages': [
             {
                 'token_class': 'AccessToken',
                 'token_type': 'access',
                 'message': 'You Try to create a register who already exists',
+            }
+        ]
+    }
+}
+
+organization_already_exist = {
+    'data': {
+        'detail': 'Organization Already Exists',
+        'code': 'try_to_create_a_register_who_exists',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'You Try to create a organization register who already exists',
             }
         ]
     }
