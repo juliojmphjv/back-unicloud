@@ -63,6 +63,9 @@ class ConsultaReceita:
         logger.info(f'dic is: {dic}')
         return dic
 
+    def get_parsed(self):
+        return self.__parse_input()
+
     def cnpj_isvalid(self):
         return (True, self.__consulta_cnpj()['message']) if not self.__consulta_cnpj()['status'] else False
 
