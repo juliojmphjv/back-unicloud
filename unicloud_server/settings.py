@@ -210,6 +210,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "https://unicloudstorage.z15.web.core.windows.net:80",
     "https://unicloudstorage.z15.web.core.windows.net:443",
+    "https://unicloud-back-development.azurewebsites.net:443",
+    "https://unicloud-back-development.azurewebsites.net:80",
 ]
 
 
