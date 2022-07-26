@@ -1,7 +1,7 @@
 from django.conf import settings
 import requests
 from logs.setup_log import logger
-
+import os
 
 class UniCloudMailer:
     def __init__(self, recipient, subject, email):
@@ -22,6 +22,6 @@ class UniCloudMailer:
                 auth=self.auth,
                 data=self.data
             )
-            logger.info(sendmail)
+            logger.info(sendmail.json())
         except Exception as error:
             logger.error(error)

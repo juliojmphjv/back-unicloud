@@ -50,7 +50,9 @@ class InvitedUserListSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     email = serializers.EmailField()
     created_at = serializers.DateTimeField()
-    status = serializers.CharField(max_length=15)
+
+
+
 class InvitedUserSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     token = serializers.CharField(max_length=500)
