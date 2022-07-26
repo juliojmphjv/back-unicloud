@@ -117,13 +117,18 @@ class OrganizationLogoViewSet(viewsets.ViewSet):
             if filetype.is_image(file_uploaded):
                 if customer.type == 'root' or customer.type == 'partner':
                     if OrganizationLogo.objects.filter(organization=customer).exists():
-                        update_logo = OrganizationLogo.objects.get(organization=customer)
-                        update_logo.objects.update(logo=file_uploaded)
-                        update_logo.save()
-                        serializer = LogoSerializer(update_logo)
-                        return Response(serializer.data)
-                    createlogo = OrganizationLogo.objects.create(logo=file_uploaded, organization=customer)
-                    createlogo.save()
+                        try:
+                            update_logo = OrganizationLogo.objects.get(organization=customer)
+                            update_logo.logo = file_uploaded
+                            update_logo.save()
+                            serializer = LogoSerializer(update_logo)
+                            return Response(serializer.data)
+                        except Exception as error:
+                            logger.error(error)
+
+                    else:
+                        createlogo = OrganizationLogo.objects.create(logo=file_uploaded, organization=customer)
+                        createlogo.save()
                     serializer = LogoSerializer(createlogo)
                     return Response(serializer.data)
                 return Response({'error': 'Not Allowed'})
