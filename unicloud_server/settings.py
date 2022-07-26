@@ -212,6 +212,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://unicloudstorage.z15.web.core.windows.net:443",
 ]
 
+
 APIKEY_MAILGUN = os.getenv('APIKEY_MAILGUN')
 EMAIL_FROM = 'Não Responda <postmaster@uni.cloud>'
 

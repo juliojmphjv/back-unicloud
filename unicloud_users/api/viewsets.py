@@ -21,6 +21,7 @@ from logs.setup_log import logger
 import datetime
 from django.utils import timezone
 import pytz
+from unicloud_customers.customer_permissions import IsCustomer
 
 class UsersViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated, )
@@ -95,7 +96,7 @@ class MenuViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 class InviteUsersViewSet(viewsets.ViewSet):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsCustomer, )
     def create(self, request):
         customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
         customer = Customer.objects.get(id=customer_id)
@@ -106,7 +107,7 @@ class InviteUsersViewSet(viewsets.ViewSet):
             return Response(messages.invite_already_exist, 409)
 
         except InvitedUser.DoesNotExist:
-            logger.info('Invide Does not exists, creating an invite')
+            logger.info('Invite Does not exists, creating an invite')
             token_generator = TokenGenerator(request.data['email'])
             token = token_generator.gettoken()
             invitation = InvitedUser.objects.create(email=request.data['email'], token=token, customer=customer)
