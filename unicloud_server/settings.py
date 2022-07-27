@@ -208,6 +208,8 @@ SIMPLE_JWT = {
 if os.getenv('env') == 'dev':
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:3000",
+        "http://localhost:80",
+        "http://localhost:443",
         "http://127.0.0.1:3000",
         "https://unicloud-front-development.azurewebsites.net",
         "https://unicloud-front-development.azurewebsites.net:443",
