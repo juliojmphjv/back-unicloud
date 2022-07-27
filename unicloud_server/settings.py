@@ -205,15 +205,18 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "https://unicloudstorage.z15.web.core.windows.net:80",
-    "https://unicloudstorage.z15.web.core.windows.net:443",
-    "https://unicloud-back-development.azurewebsites.net:443",
-    "https://unicloud-back-development.azurewebsites.net:80",
-    "https://unicloud-back-development.azurewebsites.net"
-]
+if os.getenv('env') == 'dev':
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://unicloud-front-development.azurewebsites.net",
+        "https://unicloud-front-development.azurewebsites.net:443"
+    ]
+else:
+    CORS_ALLOWED_ORIGINS = [
+        "https://unicloud-front-development.azurewebsites.net",
+        "https://unicloud-front-development.azurewebsites.net:443"
+    ]
 
 
 APIKEY_MAILGUN = os.getenv('APIKEY_MAILGUN')
