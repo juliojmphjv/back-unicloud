@@ -210,12 +210,14 @@ if os.getenv('env') == 'dev':
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "https://unicloud-front-development.azurewebsites.net",
-        "https://unicloud-front-development.azurewebsites.net:443"
+        "https://unicloud-front-development.azurewebsites.net:443",
+        "https://unicloud-front-development.azurewebsites.net:80"
     ]
 else:
     CORS_ALLOWED_ORIGINS = [
-        "https://unicloud-front-development.azurewebsites.net",
-        "https://unicloud-front-development.azurewebsites.net:443"
+        "https://broker.uni.cloud",
+        "https://broker.uni.cloud:443",
+        "https://broker.uni.cloud:80"
     ]
 
 
