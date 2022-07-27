@@ -162,7 +162,10 @@ class TokenViewSet(viewsets.ViewSet):
                 date_expires = datetime.datetime.strptime(date_expires, '%Y-%m-%d %H:%M:%S')
                 now = timezone.make_naive(timezone.now())
 
-                if date_expires < now:
+                logger.info(f'expire in: {date_expires}')
+                logger.info(f'now is: {now}')
+
+                if date_expires > now:
                     serializer = InvitedUserSerializer({'id':token_data.id, 'token':token_data.token, 'email':token_data.email, 'razao_social':token_data.customer.razao_social, 'is_valid':True})
                     return Response(serializer.data)
                 else:
