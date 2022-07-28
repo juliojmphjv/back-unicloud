@@ -35,7 +35,6 @@ class ConsultaReceita:
         soma = soma % 11
         digito_dois = 0 if soma < 2 else 11 - soma
 
-        logger.info(f'validation result: {verificadores == str(digito_um) + str(digito_dois)}')
         return verificadores == str(digito_um) + str(digito_dois)
 
     def __parse_input(self):
@@ -46,7 +45,6 @@ class ConsultaReceita:
         cnpj = cnpj.replace('/', '')
         cnpj = cnpj.replace('-', '')
         cnpj = cnpj.replace('\\', '')
-        logger.info(cnpj)
         return cnpj
 
     def __consulta_cnpj(self):
@@ -60,7 +58,6 @@ class ConsultaReceita:
             content = fd.read().decode()
 
         dic = json.loads(content)
-        logger.info(f'dic is: {dic}')
         return dic
 
     def get_parsed(self):

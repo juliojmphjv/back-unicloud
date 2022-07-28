@@ -56,7 +56,3 @@ class Zadara:
         except Exception as error:
             logger.error(error)
             return ['lon city wasnt found', 'lat city wasnt found']
-
-    # def get_total_memory(self):
-    #     try:
-
