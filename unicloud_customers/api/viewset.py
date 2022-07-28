@@ -27,18 +27,15 @@ class CustomerViewSet(viewsets.ViewSet):
             consulta_receitafederal = ConsultaReceita(request.data['cnpj'])
             customer_data = consulta_receitafederal.get_data()
             cnpj = consulta_receitafederal.get_parsed()
-            logger.info(f'Parsed: {cnpj}')
         except Exception as error:
             logger.error(error)
 
         requester = CustomerObject(request).get_customer_object()
         if requester.type == 'root':
             try:
-                logger.info(request.data['cnpj'])
                 customer = Customer.objects.get(cnpj=cnpj)
-                logger.info(customer)
                 response = messages.organization_already_exist
-                status = 400
+                status = 409
                 return Response(response, status)
             except Customer.DoesNotExist:
                 customer = Customer.objects.create(razao_social=customer_data['nome'], telefone=customer_data['telefone'], email=customer_data['email'], bairro=customer_data['bairro'], logradouro=customer_data['logradouro'], numero=customer_data['numero'], cep=customer_data['cep'], municipio=customer_data['municipio'], nome_fantasia=customer_data['fantasia'], natureza_juridica=customer_data['natureza_juridica'], estado=customer_data['uf'], cnpj=cnpj, type='partner')
@@ -48,7 +45,7 @@ class CustomerViewSet(viewsets.ViewSet):
                 try:
                     InvitedUser.objects.get(email=request.data['email'])
                     response = messages.invite_already_exist
-                    status = 400
+                    status = 409
                     return Response(response, status)
                 except InvitedUser.DoesNotExist:
                     invite = InvitedUser.objects.create(email=request.data['email'],customer=customer, token=token)
@@ -70,15 +67,17 @@ class CustomerViewSet(viewsets.ViewSet):
 
 
     def list(self, request):
-        organization = Customer.objects.get(id=UserCustomer.objects.get(user_id=request.user.id).customer_id)
-        customers = []
-        customer_list = CustomerRelationship.objects.filter(partner_id=organization.id)
-        for customer in customer_list:
-            customers.append(customer.customer_id)
-        customerlist = Customer.objects.filter(id__in=customers)
+        logger.info('Listing')
+        try:
+            partner_list = Customer.objects.filter(type='partner')
+            serilizer = CustomerSerializer(partner_list, many=True)
+            return Response(serilizer.data)
+        except Customer.DoesNotExist:
+            logger.error('Customer query doesnt exists')
+            return Response({'error': 'query doesnt work'})
+        except Exception as error:
+            logger.error(error)
 
-        serializer = CustomerSerializer(customerlist, many=True)
-        return Response(serializer.data)
 
 class OneCustomerViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
