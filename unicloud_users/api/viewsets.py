@@ -8,8 +8,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets
-from ..menu import customer_menu, admin_menu
-from rest_framework.renderers import JSONRenderer
+from ..menu import menu_object
+from unicloud_customers.customers import CustomerObject
 from unicloud_customers.models import UserCustomer, InvitedUser, Customer
 from django.shortcuts import get_object_or_404
 from error_messages import messages
@@ -82,18 +82,26 @@ class MyTokenObtainPairView(TokenObtainPairView):
         return self.request.user
 
 class MenuViewSet(viewsets.ViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsCustomer, )
     def retrieve(self, request):
-        if request.user.is_superuser and request.user.is_staff:
-            try:
-                menu = {'menu': [*admin_menu, *customer_menu]}
-                serializer = MenuSerializer(menu)
+        try:
+            organization = CustomerObject(request)
+            if organization.get_customer_object().type == 'root':
+                user_menu = {'menu': [ *menu_object['common'], *menu_object['root']]}
+                serializer = MenuSerializer(user_menu)
                 return Response(serializer.data)
-            except Exception as error:
-                logger.error(error)
-                return Response(error)
-        serializer = MenuSerializer(customer_menu)
-        return Response(serializer.data)
+            elif organization.get_customer_object().type == 'partner':
+                user_menu = {'menu': [ *menu_object['common'], *menu_object['partner']]}
+                serializer = MenuSerializer(user_menu)
+                return Response(serializer.data)
+            elif organization.get_customer_object().type == 'customer':
+                user_menu = {'menu': [ *menu_object['common'], *menu_object['customer']]}
+                serializer = MenuSerializer(user_menu)
+                return Response(serializer.data)
+        except Exception as error:
+            logger.error(error)
+            return Response(messages.bad_request, 400)
+
 
 class InviteUsersViewSet(viewsets.ViewSet):
     permission_classes = (IsCustomer, )
