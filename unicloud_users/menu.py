@@ -1,32 +1,48 @@
-admin_menu = [
-  {
-    'heading': "Administração",
-  },
-  {
-    'icon': "RiGroup2Line",
-    'text': "Clientes",
-    'link': "/customers/",
-  },
-  {
-    'icon': "RiDashboardLine",
-    'text': "Pods",
-    'link': "/unicloud-pods",
-  },
-  {
-    'icon': "RiNumbersLine",
-    'text': "Monitoramento",
-    'link': "/monitor",
-  },
-]
+menu_object = {
+  "common": [
+    {
+      "icon": "carbon:dashboard",
+      "text": "Dashboard",
+      "link": "/"
+    },
+    {
+      "icon": "ph:users-three-thin",
+      "text": "Usuários",
+      "link": "/user-list-default"
+    },
 
-customer_menu = [
-{
-    'heading': "Time de usuários",
-  },
-  {
-    'icon': "RiTeamLine",
-    'text': "Usuários",
-    'link': "/user-list-default",
 
-  },
-]
+  ],
+  "root": [
+    {
+      "icon": "wpf:business-contact",
+      "text": "Partners",
+      "link": "/customers/"
+    },
+    {
+      "icon": "eos-icons:pod-outlined",
+      "text": "Pods",
+      "link": "/unicloud-pods"
+    },
+    {
+      "icon": "system-uicons:graph-box",
+      "text": "Monitoramento",
+      "link": "/monitor"
+    },
+    {
+      "icon": "clarity:contract-line",
+      "text": "Contratos",
+      "link": "/contracts"
+    }
+  ],
+  "partner": [
+    {
+      "icon": "wpf:business-contact",
+      "text": "Clientes",
+      "link": "/customers/"
+    }
+  ],
+  "customer": [
+
+  ]
+}
