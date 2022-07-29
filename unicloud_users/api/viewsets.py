@@ -1,3 +1,5 @@
+import os
+
 from rest_framework.viewsets import ModelViewSet
 from unicloud_users.api.serializers import UserListSerializer, LoginTokenSerializer, MenuSerializer, UserSerializer, InvitedUserListSerializer, InvitedUserSerializer, InvalidTokenSerializer
 from unicloud_users.models import UserProfile
@@ -122,9 +124,10 @@ class InviteUsersViewSet(viewsets.ViewSet):
             invitation.save()
 
             logger.info("Finally sending the invitation email.")
+            front_url = os.getenv('URL_FRONT_END')
             mensagem = {
                 'empresa': customer.razao_social,
-                'link': f'https://broker.uni.cloud/auth-register/?token={token}'
+                'link': f'{front_url}/auth-register/?token={token}'
             }
             rendered_email = get_template('email/welcome.html').render(mensagem)
             mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
