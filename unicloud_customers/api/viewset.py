@@ -16,7 +16,7 @@ from logs.setup_log import logger
 from rest_framework.parsers import FileUploadParser
 import filetype
 from unicloud_customers.customers import CustomerObject, PartnerObject
-
+import os
 class PartnerViewSet(viewsets.ViewSet):
     permission_classes = (IsRoot,)
 
@@ -51,9 +51,10 @@ class PartnerViewSet(viewsets.ViewSet):
                     invite = InvitedUser.objects.create(email=request.data['email'],customer=customer, token=token)
                     invite.save()
                     try:
+                        front_url = os.getenv('URL_FRONT_END')
                         mensagem = {
                             'empresa': customer.razao_social,
-                            'link': f'http://127.0.0.1:3000/auth-register/?token={token}'
+                            'link': f'{front_url}/auth-register/?token={token}'
                         }
                         rendered_email = get_template('email/welcome.html').render(mensagem)
                         mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
