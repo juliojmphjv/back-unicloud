@@ -44,7 +44,7 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('invite-user/', InviteUsersViewSet.as_view({'post': 'create', 'get': 'retrieve'}), name='invited-user'),
     path('check-token/', TokenViewSet.as_view({'post': 'check_token'}), name='token'),
-    path('customers/', CustomerViewSet.as_view({'post': 'create', 'get': 'list'}), name='customers'),
+    path('customers/', CustomerViewSet.as_view({'get': 'list'}), name='customers'),
     path('one-customer/<int:pk>/', OneCustomerViewSet.as_view({'patch': 'partial_update'})),
     path('menu/', MenuViewSet.as_view({'get': 'retrieve'})),
     path('users/', UsersViewSet.as_view({'get': 'retrieve'})),
