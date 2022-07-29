@@ -15,9 +15,9 @@ from check_root.unicloud_check_root import CheckRoot
 from logs.setup_log import logger
 from rest_framework.parsers import FileUploadParser
 import filetype
-from unicloud_customers.customers import CustomerObject
+from unicloud_customers.customers import CustomerObject, PartnerObject
 
-class CustomerViewSet(viewsets.ViewSet):
+class PartnerViewSet(viewsets.ViewSet):
     permission_classes = (IsRoot,)
 
     def create(self, request):
@@ -65,7 +65,6 @@ class CustomerViewSet(viewsets.ViewSet):
                     status = 200
                     return Response(response.data, status)
 
-
     def list(self, request):
         logger.info('Listing')
         try:
@@ -78,6 +77,17 @@ class CustomerViewSet(viewsets.ViewSet):
         except Exception as error:
             logger.error(error)
 
+
+class CustomerViewSet(viewsets.ViewSet):
+    permission_classes = (IsPartner,)
+
+    def list(self, request):
+        try:
+            customers = PartnerObject(request).get_customer_of_partner_list()
+            serializer = CustomerSerializer(customers, many=True)
+            return Response(serializer.data)
+        except Exception as error:
+            logger.error(error)
 
 class OneCustomerViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
