@@ -110,3 +110,17 @@ invitation_doesnt_exists = {
         ]
     }
 }
+
+login_failed = {
+    'data': {
+        "detail": "No active account found or incorrect password with the given credentials",
+        'code': 'login_failed',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'No active account found or incorrect password with the given credentials',
+            }
+        ]
+    }
+}
