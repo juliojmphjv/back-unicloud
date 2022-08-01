@@ -12,3 +12,8 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class UserPreferencesModel(models.Model):
+    language = models.CharField(max_length=2)
+    theme = models.CharField(max_length=10)
+    user = models.OneToOneField(User, related_name='userpreference', on_delete=models.CASCADE)

@@ -66,3 +66,7 @@ class InvitedUserSerializer(serializers.Serializer):
 
 class InvalidTokenSerializer(serializers.Serializer):
     is_valid = serializers.BooleanField()
+
+class UserPreferenceSerializer(serializers.Serializer):
+    language = serializers.CharField(max_length=2)
+    theme = serializers.CharField(max_length=10)

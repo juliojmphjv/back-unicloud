@@ -124,3 +124,17 @@ login_failed = {
         ]
     }
 }
+
+user_preference_failed = {
+    'data': {
+        "detail": "User Havent Preferences",
+        'code': 'get_preferences_failed',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'User Havent Preferences',
+            }
+        ]
+    }
+}

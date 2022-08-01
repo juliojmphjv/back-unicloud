@@ -1,8 +1,8 @@
 import os
 
 from rest_framework.viewsets import ModelViewSet
-from unicloud_users.api.serializers import UserListSerializer, LoginTokenSerializer, MenuSerializer, UserSerializer, InvitedUserListSerializer, InvitedUserSerializer, InvalidTokenSerializer, LoginV2Serializer
-from unicloud_users.models import UserProfile
+from unicloud_users.api.serializers import UserListSerializer, LoginTokenSerializer, MenuSerializer, UserSerializer, InvitedUserListSerializer, InvitedUserSerializer, InvalidTokenSerializer, LoginV2Serializer, UserPreferenceSerializer
+from unicloud_users.models import UserProfile, UserPreferencesModel
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.contrib.auth.models import User
@@ -42,6 +42,31 @@ class UsersViewSet(viewsets.ViewSet):
         userlist = User.objects.filter(id__in=ids)
         serializer = UserListSerializer(userlist, many=True)
         return Response(serializer.data)
+
+class UserPreference(viewsets.ViewSet):
+    permission_classes = (IsCustomer, )
+
+    def create(self, request):
+        try:
+            user_preference = UserPreferencesModel.objects.create(user=request.user, language=request.data['language'], theme=request.data['theme'])
+            user_preference.save()
+            serializer = UserPreferenceSerializer(user_preference)
+            return Response(serializer.data)
+        except Exception as error:
+            logger.error()
+            return Response({'error': error})
+
+    def retrieve(self, request):
+        try:
+            user_preference = UserPreferencesModel.objects.get(user=request.user)
+            serializer = UserPreferenceSerializer(user_preference)
+            return Response(serializer.data)
+        except UserPreferencesModel.DoesNotExist:
+            return Response(messages.user_preference_failed)
+        except Exception as error:
+            return Response({'error': error})
+
+
 
 class UserRegisterViewSet(viewsets.ViewSet):
     def user_register(self, request):
