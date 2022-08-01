@@ -19,6 +19,10 @@ class LoginTokenSerializer(TokenObtainPairSerializer):
         # ...
         return token
 
+class LoginV2Serializer(serializers.Serializer):
+    refresh = serializers.CharField(max_length=500)
+    access = serializers.CharField(max_length=500)
+
 class MenuSerializer(serializers.Serializer):
     menu = serializers.JSONField()
 

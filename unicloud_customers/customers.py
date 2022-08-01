@@ -6,8 +6,12 @@ class CustomerObject:
         self.request = request
 
     def get_customer_object(self):
-        requester_organzation_id = UserCustomer.objects.get(user_id=self.request.user.id).customer_id
-        return Customer.objects.get(id=requester_organzation_id)
+        try:
+            logger.info(self.request.id)
+            requester_organzation_id = UserCustomer.objects.get(user_id=self.request.user.id).customer_id
+            return Customer.objects.get(id=requester_organzation_id)
+        except Exception as error:
+            logger.error(error)
 
 class PartnerObject(CustomerObject):
 

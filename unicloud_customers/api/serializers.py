@@ -24,3 +24,7 @@ class CustomerTypeSerializer(serializers.Serializer):
 
 class LogoSerializer(serializers.Serializer):
     logo = FileField()
+
+class IdentifySerializer(serializers.Serializer):
+     logo = FileField()
+     authentication_factors = serializers.CharField(max_length=50)

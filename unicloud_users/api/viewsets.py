@@ -1,19 +1,20 @@
 import os
 
 from rest_framework.viewsets import ModelViewSet
-from unicloud_users.api.serializers import UserListSerializer, LoginTokenSerializer, MenuSerializer, UserSerializer, InvitedUserListSerializer, InvitedUserSerializer, InvalidTokenSerializer
+from unicloud_users.api.serializers import UserListSerializer, LoginTokenSerializer, MenuSerializer, UserSerializer, InvitedUserListSerializer, InvitedUserSerializer, InvalidTokenSerializer, LoginV2Serializer
 from unicloud_users.models import UserProfile
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets
 from ..menu import menu_object
 from unicloud_customers.customers import CustomerObject
-from unicloud_customers.models import UserCustomer, InvitedUser, Customer
-from django.shortcuts import get_object_or_404
+from unicloud_customers.models import UserCustomer, InvitedUser, Customer, OrganizationLogo
+from unicloud_customers.api.serializers import LogoSerializer, IdentifySerializer
 from error_messages import messages
 from check_root.unicloud_check_root import CheckRoot
 from unicloud_tokengenerator.generator import TokenGenerator
@@ -77,6 +78,42 @@ class UserRegisterViewSet(viewsets.ViewSet):
             return Response(serialized_data.data)
         logger.error(f'invite already exists: {is_invited.exists()}')
         return Response(messages.invite_already_exist, 303)
+
+class Indentify(viewsets.ViewSet):
+
+    def identify(self, request):
+        try:
+            user = User.objects.get(username=request.data['username'])
+            requester_organzation_id = UserCustomer.objects.get(user_id=user.id).customer_id
+            organization_logo = OrganizationLogo.objects.get(organization_id=requester_organzation_id)
+            obj = {
+                "logo":organization_logo.logo,
+                "authentication_factors": ["password"],
+            }
+            serializer = IdentifySerializer(obj)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response(messages.login_failed)
+            pass
+
+class LoginV2(viewsets.ViewSet):
+
+    def login(self, request):
+        try:
+            user = User.objects.get(username=request.data['username'])
+            if user.check_password(request.data['password']):
+                refresh = RefreshToken.for_user(user)
+                response = {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                }
+                serializer = LoginV2Serializer(response)
+                return Response(serializer.data)
+            else:
+                return Response(messages.login_failed)
+        except User.DoesNotExist:
+            return Response(messages.login_failed)
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = LoginTokenSerializer
