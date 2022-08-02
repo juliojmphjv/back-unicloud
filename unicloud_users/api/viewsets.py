@@ -47,13 +47,34 @@ class UserPreference(viewsets.ViewSet):
     permission_classes = (IsCustomer, )
 
     def create(self, request):
+        supported_languages = ["pt", "es", "en", "fr"]
+        supported_themes = ["dark", "light"]
         try:
-            user_preference = UserPreferencesModel.objects.create(user=request.user, language=request.data['language'], theme=request.data['theme'])
+            user_preference = UserPreferencesModel.objects.get(user=request.user)
+            if request.data['language'] and request.data['language'] in supported_languages:
+                user_preference.language = request.data['language']
+
+            if request.data['theme'] and request.data['theme'] in supported_themes:
+                user_preference.theme = request.data['theme']
+
+            user_preference.save()
+            serializer = UserPreferenceSerializer(user_preference)
+            return Response(serializer.data)
+
+        except User.DoesNotExist:
+            language = None
+            theme = None
+            if request.data['language'] and request.data['language'] in supported_languages:
+                language = request.data['language']
+            if request.data['theme'] and request.data['language'] in supported_themes:
+                theme = request.data['theme']
+
+            user_preference = UserPreferencesModel.objects.create(language=language, theme=theme)
             user_preference.save()
             serializer = UserPreferenceSerializer(user_preference)
             return Response(serializer.data)
         except Exception as error:
-            logger.error()
+            logger.error(error)
             return Response({'error': error})
 
     def retrieve(self, request):
