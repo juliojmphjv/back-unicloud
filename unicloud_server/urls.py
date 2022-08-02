@@ -21,7 +21,7 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView
 )
 from rest_framework import routers
-from unicloud_users.api.viewsets import MyTokenObtainPairView, UsersViewSet, MenuViewSet, InviteUsersViewSet, TokenViewSet, UserRegisterViewSet, LoginV2, Indentify
+from unicloud_users.api.viewsets import MyTokenObtainPairView, UsersViewSet, MenuViewSet, InviteUsersViewSet, TokenViewSet, UserRegisterViewSet, LoginV2, Indentify, UserPreference
 from unicloud_customers.api.viewset import CustomerViewSet, OneCustomerViewSet, CustomerType, Organization, OrganizationLogoViewSet
 from unicloud_dashboard.api.viewset import CustomerDashboard
 from unicloud_pods.api.viewset import ZadaraPodsViewSet
@@ -63,6 +63,7 @@ urlpatterns = [
     path('contracts/', ContractsViewSet.as_view({'post': 'create', 'get': 'retrieve', 'delete': 'delete'})),
     path('assets/', AssetsViewSet.as_view({'post': 'create', 'get': 'retrieve'})),
     path('opportunity-register/', OpportunityRegister.as_view({'post': 'create', 'get': 'retrieve'})),
+    path('user-preferences/', UserPreference.as_view({'post': 'create', 'get': 'retrieve'})),
 
 
 

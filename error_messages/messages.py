@@ -124,3 +124,45 @@ login_failed = {
         ]
     }
 }
+
+user_preference_failed = {
+    'data': {
+        "detail": "User Havent Preferences",
+        'code': 'get_preferences_failed',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'User Havent Preferences',
+            }
+        ]
+    }
+}
+
+language_unsupported = {
+    'data': {
+        "detail": "Language unsupported",
+        'code': 'language_unsupported',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'This language is not supported by broker',
+            }
+        ]
+    }
+}
+
+theme_unsupported = {
+    'data': {
+        "detail": "Theme unsupported",
+        'code': 'theme_unsupported',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'This theme is not supported by broker',
+            }
+        ]
+    }
+}
