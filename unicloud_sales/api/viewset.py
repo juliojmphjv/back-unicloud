@@ -56,7 +56,7 @@ class OpportunityRegister(viewsets.ViewSet):
                 logger.info(f'getting the customer: {customer}')
 
                 logger.info('Creating the opportunity...')
-                opportunity = Opportunity.objects.create(opportunity_name=['opportunity_name'], partner=requester_organization_instance, customer=customer, opportunity_description=request.data['description'], user=request.user)
+                opportunity = Opportunity.objects.create(opportunity_name=request.data['opportunity_name'], partner=requester_organization_instance, customer=customer, opportunity_description=request.data['description'], user=request.user)
                 opportunity.save()
                 logger.info('Opportunity request created.')
 
@@ -84,6 +84,7 @@ class OpportunityRegister(viewsets.ViewSet):
         opportunities = None
         if organization.get_customer_object().type == 'root':
             opportunities = Opportunity.objects.all()
+            logger.info(opportunities)
         elif organization.get_customer_object().type == 'partner':
             opportunities = Opportunity.objects.filter(partner=organization.get_customer_object().id)
 
