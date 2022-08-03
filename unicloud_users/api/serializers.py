@@ -54,6 +54,7 @@ class InvitedUserListSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     email = serializers.EmailField()
     created_at = serializers.DateTimeField()
+    status = serializers.CharField()
 
 
 
