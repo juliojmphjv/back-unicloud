@@ -228,12 +228,12 @@ class InviteUsersViewSet(viewsets.ViewSet):
                 date_expires = datetime.datetime.strptime(date_expires, '%Y-%m-%d %H:%M:%S')
                 now = timezone.make_naive(timezone.now())
 
-                if date_expires > now:
+                if date_expires < now:
                     logger.info('pending')
-                    setattr(invite, 'status', 'pending')
+                    invite.status = 'pending'
                 else:
                     logger.info('expired')
-                    setattr(invite, 'status', 'expired')
+                    invite.status = 'expired'
             serializar = InvitedUserListSerializer(invitations, many=True)
             return Response(serializar.data)
         except Exception as error:
