@@ -86,8 +86,6 @@ class UserPreference(viewsets.ViewSet):
         except Exception as error:
             return Response({'error': error})
 
-
-
 class UserRegisterViewSet(viewsets.ViewSet):
 
     def user_register(self, request):
@@ -249,31 +247,29 @@ class InviteUsersViewSet(viewsets.ViewSet):
 class TokenViewSet(viewsets.ViewSet):
 
     def check_token(self, request):
-        token = InvitedUser.objects.filter(token=request.data['token']).exists()
-        if token:
-            try:
-                token_data = InvitedUser.objects.get(token=request.data['token'])
-                date_expires = datetime.datetime.strftime(token_data.created_at + datetime.timedelta(hours=24),
-                                                          "%Y-%m-%d %H:%M:%S")
-                date_expires = datetime.datetime.strptime(date_expires, '%Y-%m-%d %H:%M:%S')
-                now = timezone.make_naive(timezone.now())
+        try:
+            token = InvitedUser.objects.get(token=request.data['token'])
+            date_expires = datetime.datetime.strftime(token.created_at + datetime.timedelta(hours=24),
+                                                      "%Y-%m-%d %H:%M:%S")
+            date_expires = datetime.datetime.strptime(date_expires, '%Y-%m-%d %H:%M:%S')
+            now = timezone.make_naive(timezone.now())
 
-                logger.info(f'expire in: {date_expires}')
-                logger.info(f'now is: {now}')
+            if date_expires > now:
+                serializer = InvitedUserSerializer(
+                    {'id': token.id, 'token': token.token, 'email': token.email,
+                     'razao_social': token.customer.razao_social, 'is_valid': True})
+                return Response(serializer.data)
+            else:
+                return Response(messages.invitation_expires, 410)
 
-                if date_expires > now:
-                    serializer = InvitedUserSerializer({'id':token_data.id, 'token':token_data.token, 'email':token_data.email, 'razao_social':token_data.customer.razao_social, 'is_valid':True})
-                    return Response(serializer.data)
-                else:
-                    logger.info(f'Token 24h timedelta expired.'
-                                f'Token created at: {token_data.created_at}'
-                                f'Time was tried to activate: {now}')
-                    return Response(messages.invitation_expires, 410)
-            except Exception as error:
-                logger.error(error)
+        except InvitedUser.DoesNotExist:
+            logger.error(messages.invalid_invitation)
+            return Response(messages.invalid_invitation, 404)
 
-        serializer = InvalidTokenSerializer({'is_valid':False})
-        return Response(messages.invalid_invitation, 404)
+        except Exception as error:
+            logger.error(error)
+            return Response({'error': error})
+
 
     def update_invitation(self, request):
         logger.info('Re-creating the invite')
