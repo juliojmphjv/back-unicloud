@@ -50,7 +50,7 @@ urlpatterns = [
     path('one-customer/<int:pk>/', OneCustomerViewSet.as_view({'patch': 'partial_update'})),
     path('menu/', MenuViewSet.as_view({'get': 'retrieve'})),
     path('users/', UsersViewSet.as_view({'get': 'retrieve'})),
-    path('user-register/', UserRegisterViewSet.as_view({'post': 'user_register'})),
+    path('user-register/', UserRegisterViewSet.as_view({'post': 'user_register2'})),
     path('customer-type/', CustomerType.as_view({'get': 'get_type'})),
     path('get-organization/', Organization.as_view({'get': 'get_organization'})),
     path('organization-logo/', OrganizationLogoViewSet.as_view({'post': 'create', 'get': 'get_logo'})),

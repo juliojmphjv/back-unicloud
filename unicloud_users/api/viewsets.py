@@ -91,14 +91,16 @@ class UserPreference(viewsets.ViewSet):
 class UserRegisterViewSet(viewsets.ViewSet):
 
     def user_register(self, request):
-        isunicloud_user = False
+        isunicloud_user = None
         try:
-            is_invited = InvitedUser.objects.filter(email=request.data['username'])
-            customer = Customer.objects.get(id=is_invited[0].customer_id)
+            is_invited = InvitedUser.objects.get(email=request.data['username'])
+            customer = Customer.objects.get(id=is_invited.customer_id)
+
             if customer.type == "root":
                 isunicloud_user = True
+
             try:
-                User.objects.get(username=request.data['username'])
+                already_is_user = User.objects.get(username=request.data['username'])
                 return Response(messages.user_already_exists, 409)
             except User.DoesNotExist:
                 user = User.objects.create_user(username=request.data['username'], password=request.data['password'],
@@ -106,18 +108,21 @@ class UserRegisterViewSet(viewsets.ViewSet):
                                                 last_name=request.data['last_name'], is_staff=isunicloud_user,
                                                 is_superuser=isunicloud_user)
                 user.save()
-                userprofile = UserProfile(phone=request.data['phone'], address=request.data['address'],
+                user_profile = UserProfile(phone=request.data['phone'], address=request.data['address'],
                                           city=request.data['city'], state=request.data['state'],
                                           country=request.data['country'], user=user)
-                userprofile.save()
-                user_customer = UserCustomer(user=user, customer_id=customer.id)
-                user_customer.save()
+                user_profile.save()
+                customer_user_from = UserCustomer(user=user, customer=customer)
+                customer_user_from.save()
                 serialized_data = UserSerializer(user)
-
                 is_invited.delete()
                 return Response(serialized_data.data)
+
+
         except InvitedUser.DoesNotExist:
             return Response(messages.invitation_doesnt_exists, 401)
+        except Customer.DoesNotExist:
+            return Response(messages.organization_already_exist, 401)
         except Exception as error:
             logger.error(error)
             return Response({'error': error})
