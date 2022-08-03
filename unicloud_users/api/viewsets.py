@@ -91,7 +91,7 @@ class UserPreference(viewsets.ViewSet):
 class UserRegisterViewSet(viewsets.ViewSet):
 
     def user_register(self, request):
-        isunicloud_user = None
+        isunicloud_user = False
         try:
             is_invited = InvitedUser.objects.get(email=request.data['username'])
             customer = Customer.objects.get(id=is_invited.customer_id)
