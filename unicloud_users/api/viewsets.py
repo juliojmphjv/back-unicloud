@@ -1,5 +1,4 @@
 import os
-
 from rest_framework.viewsets import ModelViewSet
 from unicloud_users.api.serializers import UserListSerializer, LoginTokenSerializer, MenuSerializer, UserSerializer, InvitedUserListSerializer, InvitedUserSerializer, InvalidTokenSerializer, LoginV2Serializer, UserPreferenceSerializer
 from unicloud_users.models import UserProfile, UserPreferencesModel
@@ -90,40 +89,38 @@ class UserPreference(viewsets.ViewSet):
 
 
 class UserRegisterViewSet(viewsets.ViewSet):
+
     def user_register(self, request):
-        is_invited = InvitedUser.objects.filter(email=request.data['username'])
-        serialized_data = None
         isunicloud_user = False
-        if is_invited.exists():
+        try:
+            is_invited = InvitedUser.objects.filter(email=request.data['username'])
+            customer = Customer.objects.get(id=is_invited[0].customer_id)
+            if customer.type == "root":
+                isunicloud_user = True
             try:
-                logger.info("Get Customer of user invited Data")
-                customer = Customer.objects.get(id=is_invited[0].customer_id)
-                logger.info(f"Customer is {customer}")
-
-                logger.info("Creating User and their profile")
-                logger.info(f"Customer is root: {customer.type}")
-                if customer.type == "root":
-                    isunicloud_user=True
-                user = User.objects.create_user(username=request.data['username'], password=request.data['password'], email=request.data['username'], first_name=request.data['first_name'], last_name=request.data['last_name'], is_staff=isunicloud_user, is_superuser=isunicloud_user)
-                userprofile = UserProfile(phone=request.data['phone'], address=request.data['address'], city=request.data['city'], state=request.data['state'], country=request.data['country'], user=user)
+                User.objects.get(username=request.data['username'])
+                return Response(messages.user_already_exists, 409)
+            except User.DoesNotExist:
+                user = User.objects.create_user(username=request.data['username'], password=request.data['password'],
+                                                email=request.data['username'], first_name=request.data['first_name'],
+                                                last_name=request.data['last_name'], is_staff=isunicloud_user,
+                                                is_superuser=isunicloud_user)
+                user.save()
+                userprofile = UserProfile(phone=request.data['phone'], address=request.data['address'],
+                                          city=request.data['city'], state=request.data['state'],
+                                          country=request.data['country'], user=user)
                 userprofile.save()
-                logger.info(f"User Created: {user.id}")
-
-                logger.info(customer)
                 user_customer = UserCustomer(user=user, customer_id=customer.id)
                 user_customer.save()
-
                 serialized_data = UserSerializer(user)
-            except Exception as error:
-                logger.error(error)
-                return Response(messages.permission_denied, 404)
-            finally:
-                logger.info("Deleting invite")
+
                 is_invited.delete()
-                logger.info("Invite Deleted")
-            return Response(serialized_data.data)
-        logger.error(f'invite already exists: {is_invited.exists()}')
-        return Response(messages.invite_already_exist, 303)
+                return Response(serialized_data.data)
+        except InvitedUser.DoesNotExist:
+            return Response(messages.invitation_doesnt_exists, 401)
+        except Exception as error:
+            logger.error(error)
+            return Response({'error': error})
 
 class Indentify(viewsets.ViewSet):
 
