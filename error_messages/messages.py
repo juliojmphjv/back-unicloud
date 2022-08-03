@@ -139,6 +139,20 @@ user_preference_failed = {
     }
 }
 
+user_already_exists = {
+    'data': {
+        "detail": "User Already Exists",
+        'code': 'user_already_exists',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'An user with this username already exists.',
+            }
+        ]
+    }
+}
+
 language_unsupported = {
     'data': {
         "detail": "Language unsupported",
