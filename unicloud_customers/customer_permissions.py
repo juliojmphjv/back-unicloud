@@ -34,3 +34,7 @@ class IsRoot(BasePermission):
         except Exception as error:
             logger.error(error)
             return False
+
+class AllowAny(BasePermission):
+    def has_permission(self, request, view):
+        return True

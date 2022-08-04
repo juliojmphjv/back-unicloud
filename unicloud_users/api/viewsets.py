@@ -23,7 +23,8 @@ from logs.setup_log import logger
 import datetime
 from django.utils import timezone
 import pytz
-from unicloud_customers.customer_permissions import IsCustomer
+from unicloud_customers.customer_permissions import IsCustomer, AllowAny
+
 
 class UsersViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated, )
@@ -245,7 +246,8 @@ class InviteUsersViewSet(viewsets.ViewSet):
 
 
 class TokenViewSet(viewsets.ViewSet):
-
+    authentication_classes = []
+    permission_classes = (AllowAny, )
     def check_token(self, request):
         try:
             token = InvitedUser.objects.get(token=request.data['token'])
