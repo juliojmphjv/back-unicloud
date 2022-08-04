@@ -61,7 +61,7 @@ class UserPreference(viewsets.ViewSet):
             serializer = UserPreferenceSerializer(user_preference)
             return Response(serializer.data)
 
-        except User.DoesNotExist:
+        except UserPreferencesModel.DoesNotExist:
             language = None
             theme = None
             if request.data['language'] and request.data['language'] in supported_languages:
