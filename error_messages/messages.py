@@ -180,3 +180,17 @@ theme_unsupported = {
         ]
     }
 }
+
+user_preference_without_fields = {
+    'data': {
+        "detail": "Post without required fields",
+        'code': 'post_without_required_fields',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'You need to send theme or language field',
+            }
+        ]
+    }
+}

@@ -1,6 +1,8 @@
 import os
 from rest_framework.viewsets import ModelViewSet
-from unicloud_users.api.serializers import UserListSerializer, LoginTokenSerializer, MenuSerializer, UserSerializer, InvitedUserListSerializer, InvitedUserSerializer, InvalidTokenSerializer, LoginV2Serializer, UserPreferenceSerializer
+from unicloud_users.api.serializers import UserListSerializer, LoginTokenSerializer, MenuSerializer, UserSerializer, \
+    InvitedUserListSerializer, InvitedUserSerializer, InvalidTokenSerializer, LoginV2Serializer, \
+    UserPreferenceSerializer
 from unicloud_users.models import UserProfile, UserPreferencesModel
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -27,7 +29,8 @@ from unicloud_customers.customer_permissions import IsCustomer, AllowAny
 
 
 class UsersViewSet(viewsets.ViewSet):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
+
     def retrieve(self, request):
         checkroot = CheckRoot(request)
         if checkroot.is_root():
@@ -43,8 +46,9 @@ class UsersViewSet(viewsets.ViewSet):
         serializer = UserListSerializer(userlist, many=True)
         return Response(serializer.data)
 
+
 class UserPreference(viewsets.ViewSet):
-    permission_classes = (IsCustomer, )
+    permission_classes = (IsCustomer,)
 
     def create(self, request):
         supported_languages = ["pt", "es", "en", "fr"]
@@ -64,15 +68,25 @@ class UserPreference(viewsets.ViewSet):
         except UserPreferencesModel.DoesNotExist:
             language = None
             theme = None
+            if not 'language' in request.data.keys() and not 'theme' in request.data.keys():
+                return Response(messages.user_preference_without_fields, 400)
+
             if 'language' in request.data.keys() and request.data['language'] in supported_languages:
                 language = request.data['language']
-            if 'theme' in request.data.keys() and request.data['language'] in supported_themes:
+
+            if 'theme' in request.data.keys() and request.data['theme'] in supported_themes:
                 theme = request.data['theme']
 
-            user_preference = UserPreferencesModel.objects.create(language=language, theme=theme)
-            user_preference.save()
-            serializer = UserPreferenceSerializer(user_preference)
-            return Response(serializer.data)
+            try:
+                user_preference = UserPreferencesModel.objects.create(language=language, theme=theme,
+                                                                      user=request.user)
+                user_preference.save()
+                serializer = UserPreferenceSerializer(user_preference)
+                return Response(serializer.data)
+            except Exception as error:
+                logger.error(error)
+
+
         except Exception as error:
             logger.error(error)
             return Response({'error': error})
@@ -86,6 +100,7 @@ class UserPreference(viewsets.ViewSet):
             return Response(messages.user_preference_failed)
         except Exception as error:
             return Response({'error': error})
+
 
 class UserRegisterViewSet(viewsets.ViewSet):
 
@@ -108,8 +123,8 @@ class UserRegisterViewSet(viewsets.ViewSet):
                                                 is_superuser=isunicloud_user)
                 user.save()
                 user_profile = UserProfile(phone=request.data['phone'], address=request.data['address'],
-                                          city=request.data['city'], state=request.data['state'],
-                                          country=request.data['country'], user=user)
+                                           city=request.data['city'], state=request.data['state'],
+                                           country=request.data['country'], user=user)
                 user_profile.save()
                 customer_user_from = UserCustomer(user=user, customer=customer)
                 customer_user_from.save()
@@ -126,6 +141,7 @@ class UserRegisterViewSet(viewsets.ViewSet):
             logger.error(error)
             return Response({'error': error})
 
+
 class Indentify(viewsets.ViewSet):
 
     def identify(self, request):
@@ -134,7 +150,7 @@ class Indentify(viewsets.ViewSet):
             requester_organzation_id = UserCustomer.objects.get(user_id=user.id).customer_id
             organization_logo = OrganizationLogo.objects.get(organization_id=requester_organzation_id)
             obj = {
-                "logo":organization_logo.logo,
+                "logo": organization_logo.logo,
                 "authentication_factors": ["password"],
             }
             serializer = IdentifySerializer(obj)
@@ -142,6 +158,7 @@ class Indentify(viewsets.ViewSet):
         except User.DoesNotExist:
             return Response(messages.login_failed)
             pass
+
 
 class LoginV2(viewsets.ViewSet):
 
@@ -164,24 +181,27 @@ class LoginV2(viewsets.ViewSet):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = LoginTokenSerializer
+
     def get_object(self):
         return self.request.user
 
+
 class MenuViewSet(viewsets.ViewSet):
-    permission_classes = (IsCustomer, )
+    permission_classes = (IsCustomer,)
+
     def retrieve(self, request):
         try:
             organization = CustomerObject(request)
             if organization.get_customer_object().type == 'root':
-                user_menu = {'menu': [ *menu_object['common'], *menu_object['root']]}
+                user_menu = {'menu': [*menu_object['common'], *menu_object['root']]}
                 serializer = MenuSerializer(user_menu)
                 return Response(serializer.data)
             elif organization.get_customer_object().type == 'partner':
-                user_menu = {'menu': [ *menu_object['common'], *menu_object['partner']]}
+                user_menu = {'menu': [*menu_object['common'], *menu_object['partner']]}
                 serializer = MenuSerializer(user_menu)
                 return Response(serializer.data)
             elif organization.get_customer_object().type == 'customer':
-                user_menu = {'menu': [ *menu_object['common'], *menu_object['customer']]}
+                user_menu = {'menu': [*menu_object['common'], *menu_object['customer']]}
                 serializer = MenuSerializer(user_menu)
                 return Response(serializer.data)
         except Exception as error:
@@ -190,7 +210,8 @@ class MenuViewSet(viewsets.ViewSet):
 
 
 class InviteUsersViewSet(viewsets.ViewSet):
-    permission_classes = (IsCustomer, )
+    permission_classes = (IsCustomer,)
+
     def create(self, request):
         customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
         customer = Customer.objects.get(id=customer_id)
@@ -247,7 +268,8 @@ class InviteUsersViewSet(viewsets.ViewSet):
 
 class TokenViewSet(viewsets.ViewSet):
     authentication_classes = []
-    permission_classes = (AllowAny, )
+    permission_classes = (AllowAny,)
+
     def check_token(self, request):
         try:
             token = InvitedUser.objects.get(token=request.data['token'])
@@ -272,7 +294,6 @@ class TokenViewSet(viewsets.ViewSet):
             logger.error(error)
             return Response({'error': error})
 
-
     def update_invitation(self, request):
         logger.info('Re-creating the invite')
         invite = InvitedUser.objects.filter(id=request.data['id'])
@@ -281,7 +302,7 @@ class TokenViewSet(viewsets.ViewSet):
             token_generator = TokenGenerator(invite.email)
             token = token_generator.gettoken()
             try:
-                invite.token=token
+                invite.token = token
                 invite.save()
                 mensagem = {
                     'empresa': invite.customer.razao_social,

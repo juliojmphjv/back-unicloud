@@ -11,6 +11,7 @@ from .serializers import OpportunitySerializer, OneOpportunitySerializer
 from django.core import serializers
 from error_messages import messages
 from unicloud_customers.receita_federal import ConsultaReceita
+from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 
 class OpportunityRegister(viewsets.ViewSet):
     permission_classes = (IsPartner,)
