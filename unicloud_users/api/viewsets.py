@@ -51,10 +51,10 @@ class UserPreference(viewsets.ViewSet):
         supported_themes = ["dark", "light"]
         try:
             user_preference = UserPreferencesModel.objects.get(user=request.user)
-            if request.data['language'] and request.data['language'] in supported_languages:
+            if 'language' in request.data.keys() and request.data['language'] in supported_languages:
                 user_preference.language = request.data['language']
 
-            if request.data['theme'] and request.data['theme'] in supported_themes:
+            if 'theme' in request.data.keys() and request.data['theme'] in supported_themes:
                 user_preference.theme = request.data['theme']
 
             user_preference.save()
@@ -64,9 +64,9 @@ class UserPreference(viewsets.ViewSet):
         except UserPreferencesModel.DoesNotExist:
             language = None
             theme = None
-            if request.data['language'] and request.data['language'] in supported_languages:
+            if 'language' in request.data.keys() and request.data['language'] in supported_languages:
                 language = request.data['language']
-            if request.data['theme'] and request.data['language'] in supported_themes:
+            if 'theme' in request.data.keys() and request.data['language'] in supported_themes:
                 theme = request.data['theme']
 
             user_preference = UserPreferencesModel.objects.create(language=language, theme=theme)
