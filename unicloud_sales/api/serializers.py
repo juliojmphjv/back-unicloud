@@ -27,9 +27,15 @@ class OneOpportunitySerializer(serializers.Serializer):
     opportunity_name = serializers.CharField(max_length=300)
     id = serializers.IntegerField()
     customer = serializers.CharField()
+    customer_id = serializers.IntegerField()
     opportunity_description = serializers.CharField(max_length=100000000000)
     user = serializers.CharField(max_length=100)
     status = serializers.CharField(max_length=50)
     request_date = serializers.DateTimeField()
     resources = ResourcesSerializer(required=True, many=True)
     history = HistorySerializer(required=True, many=True)
+
+class ComputeQuotationSerializer(serializers.Serializer):
+    informal = serializers.FloatField()
+    eleven_month_agreement = serializers.FloatField()
+    thirtysix_month_agreement = serializers.FloatField()

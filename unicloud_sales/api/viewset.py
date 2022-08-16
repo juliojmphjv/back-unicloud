@@ -7,11 +7,12 @@ from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from logs.setup_log import logger
 from unicloud_customers.customers import CustomerObject
-from .serializers import OpportunitySerializer, OneOpportunitySerializer
+from .serializers import OpportunitySerializer, OneOpportunitySerializer, ComputeQuotationSerializer, HistorySerializer
 from django.core import serializers
 from error_messages import messages
 from unicloud_customers.receita_federal import ConsultaReceita
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
+from ..calculator_tool import Calculator
 
 class OpportunityRegister(viewsets.ViewSet):
     permission_classes = (IsPartner,)
@@ -130,8 +131,20 @@ class OneOpportunity(viewsets.ViewSet):
             logger.error(error)
             return Response({'error': error})
 
+class CustomerSalesHistory(viewsets.ViewSet):
+    permission_classes = (IsPartner)
 
+    def create_customer_activity(self, request):
+        organization = CustomerObject(request)
+        try:
+            sales_activity = SalesRelatioshipFlow.objects.create(partner=organization.get_customer_object(), customer_id=request.data['customer_id'],
+                                                opportunity_id=request.data['opportunity_id'], description=request.data['description'])
+            sales_activity.save()
+            serializer = HistorySerializer(sales_activity)
+            return Response(serializer.data)
 
+        except Exception as error:
+            logger.error(error)
 
 class OpportunityStatus(viewsets.ViewSet):
     permission_classes = (IsRoot, )
@@ -151,3 +164,24 @@ class OpportunityStatus(viewsets.ViewSet):
         except Exception as error:
             logger.error(error)
             return Response({'error': error})
+
+class CalculatorView(viewsets.ViewSet):
+    # permission_classes = (IsRoot, )
+
+    def calc(self, request):
+        if 'compute' in request.data.keys():
+            quotation = Calculator().calc_compute(request.data['compute']['mem'], request.data['compute']['cpu'])
+            quotation = round(quotation, 2)
+            serializer = ComputeQuotationSerializer(quotation)
+            return Response(serializer.data)
+
+        elif 'storage' in request.data.keys():
+            if 'ssd' in request.data['storage']:
+                ssd_quotation = Calculator().calc_ssd(request.data['storage']['ssd'])
+                logger.info(round(ssd_quotation, 2))
+            if 'hdd' in request.data['storage']:
+                hdd_quotation = Calculator().calc_hdd(request.data['storage']['hdd'])
+                logger.info(round(hdd_quotation, 2))
+            if 'object_storage' in request.data['storage']:
+                obj_storage_quotation = Calculator().calc_object_storage(request.data['storage']['object_storage'])
+                logger.info(round(obj_storage_quotation, 2))
