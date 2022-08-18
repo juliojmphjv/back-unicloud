@@ -132,13 +132,14 @@ class OneOpportunity(viewsets.ViewSet):
             return Response({'error': error})
 
 class CustomerSalesHistory(viewsets.ViewSet):
-    permission_classes = (IsPartner)
+    permission_classes = (IsPartner, )
 
     def create_customer_activity(self, request):
         organization = CustomerObject(request)
         try:
             sales_activity = SalesRelatioshipFlow.objects.create(partner=organization.get_customer_object(), customer_id=request.data['customer_id'],
-                                                opportunity_id=request.data['opportunity_id'], description=request.data['description'])
+                                                                 opportunity_id=request.data['opportunity_id'], description=request.data['description'],
+                                                                 author=request.user)
             sales_activity.save()
             serializer = HistorySerializer(sales_activity)
             return Response(serializer.data)
