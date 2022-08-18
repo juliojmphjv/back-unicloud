@@ -108,7 +108,7 @@ class OneOpportunity(viewsets.ViewSet):
             organization = CustomerObject(request)
             opportunity = Opportunity.objects.get(id=request.GET['opportunity_id'])
 
-            if opportunity.partner.id == organization.get_customer_object().id:
+            if opportunity.partner.id == organization.get_customer_object().id or organization.get_customer_object().type == 'root':
                 opportunity.resources = []
                 resources = ResourceOfOpportunity.objects.filter(opportunity=opportunity)
                 for resource in resources:
