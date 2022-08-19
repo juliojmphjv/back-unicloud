@@ -17,6 +17,8 @@ from rest_framework.parsers import FileUploadParser
 import filetype
 from unicloud_customers.customers import CustomerObject, PartnerObject
 import os
+
+
 class PartnerViewSet(viewsets.ViewSet):
     permission_classes = (IsRoot,)
 
