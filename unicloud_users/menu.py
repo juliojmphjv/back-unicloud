@@ -2,49 +2,48 @@ menu_object = {
     "common": [
         {
             "icon": "carbon:dashboard",
-            "text": "Dashboard",
-            "link": "/"
+            "text": "dashboard",
+            "link": "/dashboard"
         },
         {
             "icon": "ph:users-three-thin",
-            "text": "Usuários",
+            "text": "users",
             "link": "/user-list-default"
         },
-
     ],
     "root": [
         {
             "icon": "wpf:business-contact",
-            "text": "Partners",
+            "text": "partners",
             "link": "/customers/"
         },
         {
             "icon": "eos-icons:pod-outlined",
-            "text": "Pods",
+            "text": "pods",
             "link": "/unicloud-pods"
         },
         {
             "icon": "system-uicons:graph-box",
-            "text": "Monitoramento",
+            "text": "monitoring",
             "link": "/monitor"
         },
         {
             "icon": "clarity:contract-line",
-            "text": "Contratos",
+            "text": "contracts",
             "link": "/contracts"
         },
         {
             "icon": "clarity:resource-pool-outline-badged",
-            "text": "Recursos",
+            "text": "resources",
             "link": "/resources"
         },
     ],
     "partner": [
         {
             "icon": "wpf:business-contact",
-            "text": "Clientes",
+            "text": "customers",
             "link": "/customers/"
-        }
+        },
     ],
     "customer": [
 
