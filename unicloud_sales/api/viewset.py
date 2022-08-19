@@ -115,11 +115,7 @@ class OneOpportunity(viewsets.ViewSet):
                     opportunity.resources.append(
                         {'resource_name': resource.resource.resource_name, 'resource_id': resource.resource.id})
                 opportunity.history = []
-                history = None
-                if organization.get_customer_object().type == 'root':
-                    history = SalesRelatioshipFlow.objects.filter(customer=opportunity.customer, opportunity=opportunity)
-                elif organization.get_customer_object().type == 'partner':
-                    history = SalesRelatioshipFlow.objects.filter(partner=organization.get_customer_object(), customer=opportunity.customer, opportunity=opportunity)
+                history = SalesRelatioshipFlow.objects.filter(customer=opportunity.customer, opportunity=opportunity)
                 for activity in history:
                     opportunity.history.append(activity)
                 serializer = OneOpportunitySerializer(opportunity)
