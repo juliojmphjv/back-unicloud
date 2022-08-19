@@ -194,3 +194,17 @@ user_preference_without_fields = {
         ]
     }
 }
+
+opportunity_doesnt_exist = {
+    'data': {
+        "detail": "Opportunity does'nt exist",
+        'code': 'opp_does_not_exists',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'This Opportunity does not exists',
+            }
+        ]
+    }
+}

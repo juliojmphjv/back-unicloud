@@ -136,13 +136,20 @@ class CustomerSalesHistory(viewsets.ViewSet):
 
     def create_customer_activity(self, request):
         organization = CustomerObject(request)
+
         try:
-            sales_activity = SalesRelatioshipFlow.objects.create(partner=organization.get_customer_object(), customer_id=request.data['customer_id'],
-                                                                 opportunity_id=request.data['opportunity_id'], description=request.data['description'],
-                                                                 author=request.user)
-            sales_activity.save()
-            serializer = HistorySerializer(sales_activity)
-            return Response(serializer.data)
+            opportunity = Opportunity.objects.get(id=request.data['opportunity_id'])
+            partner = opportunity.partner.id
+            if opportunity.partner.id == organization.get_customer_object().id or organization.get_customer_object().type == 'root':
+                sales_activity = SalesRelatioshipFlow.objects.create(partner=partner, customer_id=request.data['customer_id'],
+                                                                     opportunity_id=request.data['opportunity_id'], description=request.data['description'],
+                                                                     author=request.user)
+                sales_activity.save()
+                serializer = HistorySerializer(sales_activity)
+                return Response(serializer.data)
+        except Opportunity.DoesNotExist:
+            logger.error('Opportunity doesnt exist')
+            return Response(messages.opportunity_doesnt_exist)
 
         except Exception as error:
             logger.error(error)
