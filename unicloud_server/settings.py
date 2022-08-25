@@ -211,9 +211,9 @@ if os.getenv('env') == 'dev':
         "http://localhost:80",
         "http://localhost:443",
         "http://127.0.0.1:3000",
-        "https://unicloud-front-development.azurewebsites.net",
-        "https://unicloud-front-development.azurewebsites.net:443",
-        "https://unicloud-front-development.azurewebsites.net:80"
+        "https://unicloud-front-development-v2.azurewebsites.net",
+        "https://unicloud-front-development-v2.azurewebsites.net:443",
+        "https://unicloud-front-development-v2.azurewebsites.net:80"
     ]
 else:
     CORS_ALLOWED_ORIGINS = [
@@ -228,7 +228,7 @@ EMAIL_FROM = 'Não Responda <postmaster@uni.cloud>'
 
 #CSRF Authorization verification.
 if os.getenv('env') == 'dev':
-    CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:4173', 'https://unicloud-back-development.azurewebsites.net']
+    CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:4173', 'https://unicloud-front-development-v2.azurewebsites.net']
 else:
     CSRF_TRUSTED_ORIGINS = ['https://broker.uni.cloud']
 
