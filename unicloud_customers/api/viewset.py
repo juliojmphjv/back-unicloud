@@ -56,7 +56,7 @@ class PartnerViewSet(viewsets.ViewSet):
                         front_url = os.getenv('URL_FRONT_END')
                         mensagem = {
                             'empresa': customer.razao_social,
-                            'link': f'{front_url}/auth-register/?token={token}'
+                            'link': f'{front_url}/register/?token={token}'
                         }
                         rendered_email = get_template('email/welcome.html').render(mensagem)
                         mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
