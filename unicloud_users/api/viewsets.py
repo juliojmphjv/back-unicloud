@@ -103,7 +103,8 @@ class UserPreference(viewsets.ViewSet):
 
 
 class UserRegisterViewSet(viewsets.ViewSet):
-
+    authentication_classes = []
+    permission_classes = (AllowAny,)
     def user_register(self, request):
         isunicloud_user = False
         try:
@@ -134,9 +135,9 @@ class UserRegisterViewSet(viewsets.ViewSet):
 
 
         except InvitedUser.DoesNotExist:
-            return Response(messages.invitation_doesnt_exists, 401)
+            return Response(messages.invitation_doesnt_exists, 404)
         except Customer.DoesNotExist:
-            return Response(messages.organization_already_exist, 401)
+            return Response(messages.organization_already_exist, 409)
         except Exception as error:
             logger.error(error)
             return Response({'error': error})
