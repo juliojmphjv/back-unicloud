@@ -105,6 +105,7 @@ class UserPreference(viewsets.ViewSet):
 class UserRegisterViewSet(viewsets.ViewSet):
     authentication_classes = []
     permission_classes = (AllowAny,)
+
     def user_register(self, request):
         isunicloud_user = False
         try:
