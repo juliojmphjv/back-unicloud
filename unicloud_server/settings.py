@@ -231,12 +231,14 @@ if os.getenv('env') == 'dev':
     CSRF_TRUSTED_ORIGINS = ['http://localhost:3000',
                             'http://127.0.0.1:3000',
                             'http://localhost:4173',
-                            'https://unicloudbr.azurewebsites.net'
+                            'https://unicloudbr.azurewebsites.net',
                             'https://unicloud-front-development-v2.azurewebsites.net',
                             'https://unicloud-back-development.azurewebsites.net',
                             ]
 else:
-    CSRF_TRUSTED_ORIGINS = ['https://broker.uni.cloud']
+    CSRF_TRUSTED_ORIGINS = ['https://broker.uni.cloud',
+                            'https://unicloudbr.azurewebsites.net',
+                            ]
 
 
 sentry_sdk.init(
