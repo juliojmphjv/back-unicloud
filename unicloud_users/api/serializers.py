@@ -57,7 +57,6 @@ class InvitedUserListSerializer(serializers.Serializer):
     status = serializers.CharField()
 
 
-
 class InvitedUserSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     token = serializers.CharField(max_length=500)

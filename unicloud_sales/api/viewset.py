@@ -28,7 +28,7 @@ class OpportunityRegister(viewsets.ViewSet):
             cnpj = consulta_receitafederal.get_parsed()
         except Exception as error:
             logger.error(error)
-
+        logger.info(cnpj)
         try:
             Customer.objects.get(cnpj=cnpj)
             creation_status = True
@@ -39,7 +39,19 @@ class OpportunityRegister(viewsets.ViewSet):
 
             if customer_data['status'] != 'ERROR':
                 logger.info(f'org data from receita: {customer_data}')
-                customer = Customer.objects.create(razao_social=customer_data['nome'], telefone=customer_data['telefone'], email=customer_data['email'], bairro=customer_data['bairro'], logradouro=customer_data['logradouro'], numero=customer_data['numero'], cep=customer_data['cep'], municipio=customer_data['municipio'], nome_fantasia=customer_data['fantasia'], natureza_juridica=customer_data['natureza_juridica'], estado=customer_data['uf'], cnpj=cnpj, type='customer')
+                customer = Customer.objects.create(razao_social=customer_data['nome'],\
+                                                   telefone=customer_data['telefone'],\
+                                                   email=customer_data['email'], \
+                                                   bairro=customer_data['bairro'],\
+                                                   logradouro=customer_data['logradouro'],\
+                                                    numero=customer_data['numero'],\
+                                                    cep=customer_data['cep'],\
+                                                    municipio=customer_data['municipio'],\
+                                                    nome_fantasia=customer_data['fantasia'],\
+                                                    natureza_juridica=customer_data['natureza_juridica'],\
+                                                    estado=customer_data['uf'],\
+                                                    cnpj=cnpj,\
+                                                    type='customer')
                 customer.save()
                 customer_id = customer.id
                 creation_status = True
@@ -49,18 +61,22 @@ class OpportunityRegister(viewsets.ViewSet):
             return Response(customer_data)
         finally:
             if creation_status:
-                logger.info('Creating the opportunity request')
-                requester_organzation_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
-                logger.info(f'requester org id: {requester_organzation_id}')
-                requester_organization_instance = Customer.objects.get(id=requester_organzation_id)
-                logger.info(f'requester org instance: {requester_organization_instance}')
-                customer = Customer.objects.get(cnpj=cnpj)
-                logger.info(f'getting the customer: {customer}')
+                opp = request.data['opportunity_name']
+                try:
+                    logger.info('Creating Opportunity')
+                    requester_organzation_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
+                    requester_organization_instance = Customer.objects.get(id=requester_organzation_id)
+                    customer = Customer.objects.get(cnpj=cnpj)
 
-                logger.info('Creating the opportunity...')
-                opportunity = Opportunity.objects.create(opportunity_name=request.data['opportunity_name'], partner=requester_organization_instance, customer=customer, opportunity_description=request.data['description'], user=request.user)
-                opportunity.save()
-                logger.info('Opportunity request created.')
+                    opportunity = Opportunity.objects.create(opportunity_name=request.data['opportunity_name'],\
+                                                             partner=requester_organization_instance,\
+                                                             customer=customer,\
+                                                             opportunity_description=request.data['description'],\
+                                                             user=request.user)
+                    opportunity.save()
+                    logger.info('Opportunity request created.')
+                except Exception as error:
+                    logger.error(f"Error in Opportunity Creation - {error}")
 
                 try:
                     logger.info('Creating the opportunity resources...')
@@ -73,7 +89,11 @@ class OpportunityRegister(viewsets.ViewSet):
 
                 try:
                     logger.info('creating the activity in sales flow history')
-                    activity = SalesRelatioshipFlow.objects.create(partner=requester_organization_instance, customer=customer, author=request.user, description=request.data['description'])
+                    activity = SalesRelatioshipFlow.objects.create(partner=requester_organization_instance,\
+                                                                   customer=customer,\
+                                                                   author=request.user,\
+                                                                   description=f'{requester_organization_instance.razao_social} requesting an opportunity register to work with {opp} in {customer.razao_social}. Opportunity pending, waiting for the Sales team review.',
+                                                                   opportunity=opportunity)
                     activity.save()
                     logger.info(f'sales flow history created {activity}')
                 except Exception as error:
