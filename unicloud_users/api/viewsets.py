@@ -246,6 +246,7 @@ class InviteUsersViewSet(viewsets.ViewSet):
                 mailer.send_mail()
                 logger.info('invite sent by e-mail')
 
+                invitation.status = "pending"
                 serializar = InvitedUserListSerializer(invitation)
                 return Response(serializar.data)
 
