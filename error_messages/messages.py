@@ -208,3 +208,17 @@ opportunity_doesnt_exist = {
         ]
     }
 }
+
+cnpj_error = {
+    'data': {
+        "detail": "Invalid CNPJ",
+        'code': 'invalid_cnpj',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'CNPJ wrong or invalid',
+            }
+        ]
+    }
+}

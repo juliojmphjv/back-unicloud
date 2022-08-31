@@ -1,3 +1,4 @@
+from distutils.log import ERROR
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from unicloud_customers.customer_permissions import IsCustomer, IsPartner, IsRoot
 from unicloud_customers.customers import CustomerObject
@@ -31,6 +32,7 @@ class PartnerViewSet(viewsets.ViewSet):
             cnpj = consulta_receitafederal.get_parsed()
         except Exception as error:
             logger.error(error)
+            return Response(messages.cnpj_error, 422)
 
         requester = CustomerObject(request).get_customer_object()
         if requester.type == 'root':
