@@ -215,34 +215,39 @@ class InviteUsersViewSet(viewsets.ViewSet):
     permission_classes = (IsCustomer,)
 
     def create(self, request):
-        customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
-        customer = Customer.objects.get(id=customer_id)
-        token = None
+
         try:
-            logger.info('Check if has invite')
-            invitation = InvitedUser.objects.get(email=request.data['email'])
-            return Response(messages.invite_already_exist, 409)
+            invited_exists = User.objects.get(username=request.data['email'])
+            return Response(messages.user_already_exists, 409)
+        except User.DoesNotExist:
+            customer_id = UserCustomer.objects.get(user_id=request.user.id).customer_id
+            customer = Customer.objects.get(id=customer_id)
+            token = None
+            try:
+                logger.info('Check if has invite')
+                invitation = InvitedUser.objects.get(email=request.data['email'])
+                return Response(messages.invite_already_exist, 409)
 
-        except InvitedUser.DoesNotExist:
-            logger.info('Invite Does not exists, creating an invite')
-            token_generator = TokenGenerator(request.data['email'])
-            token = token_generator.gettoken()
-            invitation = InvitedUser.objects.create(email=request.data['email'], token=token, customer=customer)
-            invitation.save()
+            except InvitedUser.DoesNotExist:
+                logger.info('Invite Does not exists, creating an invite')
+                token_generator = TokenGenerator(request.data['email'])
+                token = token_generator.gettoken()
+                invitation = InvitedUser.objects.create(email=request.data['email'], token=token, customer=customer)
+                invitation.save()
 
-            logger.info("Finally sending the invitation email.")
-            front_url = os.getenv('URL_FRONT_END')
-            mensagem = {
-                'empresa': customer.razao_social,
-                'link': f'{front_url}/auth-register/?token={token}'
-            }
-            rendered_email = get_template('email/welcome.html').render(mensagem)
-            mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
-            mailer.send_mail()
-            logger.info('invite sent by e-mail')
+                logger.info("Finally sending the invitation email.")
+                front_url = os.getenv('URL_FRONT_END')
+                mensagem = {
+                    'empresa': customer.razao_social,
+                    'link': f'{front_url}/auth-register/?token={token}'
+                }
+                rendered_email = get_template('email/welcome.html').render(mensagem)
+                mailer = UniCloudMailer(request.data['email'], 'Bem vindo ao Uni.Cloud Broker', rendered_email)
+                mailer.send_mail()
+                logger.info('invite sent by e-mail')
 
-            serializar = InvitedUserListSerializer(invitation)
-            return Response(serializar.data)
+                serializar = InvitedUserListSerializer(invitation)
+                return Response(serializar.data)
 
     def retrieve(self, request):
         try:

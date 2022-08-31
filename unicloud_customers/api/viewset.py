@@ -40,7 +40,17 @@ class PartnerViewSet(viewsets.ViewSet):
                 status = 409
                 return Response(response, status)
             except Customer.DoesNotExist:
-                customer = Customer.objects.create(razao_social=customer_data['nome'], telefone=customer_data['telefone'], email=customer_data['email'], bairro=customer_data['bairro'], logradouro=customer_data['logradouro'], numero=customer_data['numero'], cep=customer_data['cep'], municipio=customer_data['municipio'], nome_fantasia=customer_data['fantasia'], natureza_juridica=customer_data['natureza_juridica'], estado=customer_data['uf'], cnpj=cnpj, type='partner')
+                customer = Customer.objects.create(razao_social=customer_data['nome'],
+                                                   telefone=customer_data['telefone'],
+                                                   email=customer_data['email'],
+                                                   bairro=customer_data['bairro'],
+                                                   logradouro=customer_data['logradouro'],
+                                                   numero=customer_data['numero'],
+                                                   cep=customer_data['cep'],
+                                                   municipio=customer_data['municipio'],
+                                                   nome_fantasia=customer_data['fantasia'],
+                                                   natureza_juridica=customer_data['natureza_juridica'],
+                                                   estado=customer_data['uf'], cnpj=cnpj, type='partner')
                 customer.save()
                 token_generator = TokenGenerator(request.data['email'])
                 token = token_generator.gettoken()
