@@ -1,13 +1,3 @@
-POST http://127.0.0.1:8000/partner/create-history/ HTTP/1.1
-content-type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYxOTc5MzY1LCJpYXQiOjE2NjE5NzU3NjUsImp0aSI6IjcwYzg3NTgxNDkyMTRjYTg5ODA0MGMwMzU4ZmVhZDc4IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJyb290QHVuaS5jbG91ZCIsImZpcnN0X25hbWUiOiJSb290IiwibGFzdF9uYW1lIjoiVXNlciBVbmkuQ2xvdWQiLCJpc19zdXBlcnVzZXIiOnRydWUsImlzX3N0YWZmIjp0cnVlLCJlbWFpbCI6InJvb3RAdW5pLmNsb3VkIn0.6F-8HFrN5BuDOVQ0fBSP2y9uZYHOPZS22qn2ZWGC1LQ
-
-{
-    "opportunity_id": 19,
-    "customer_id": 70,
-    "description": "Testando criação de oportunidade"
-}
-###
 POST http://127.0.0.1:8000/partner/opportunity-register/ HTTP/1.1
 content-type: application/json
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYxOTc5MzY1LCJpYXQiOjE2NjE5NzU3NjUsImp0aSI6IjcwYzg3NTgxNDkyMTRjYTg5ODA0MGMwMzU4ZmVhZDc4IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJyb290QHVuaS5jbG91ZCIsImZpcnN0X25hbWUiOiJSb290IiwibGFzdF9uYW1lIjoiVXNlciBVbmkuQ2xvdWQiLCJpc19zdXBlcnVzZXIiOnRydWUsImlzX3N0YWZmIjp0cnVlLCJlbWFpbCI6InJvb3RAdW5pLmNsb3VkIn0.6F-8HFrN5BuDOVQ0fBSP2y9uZYHOPZS22qn2ZWGC1LQ
