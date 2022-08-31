@@ -1,0 +1,16 @@
+GET http://127.0.0.1:8000/invite-user/ HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYxOTc0NTE3LCJpYXQiOjE2NjE5NzA5MTcsImp0aSI6IjM2ZGJlMTc3MTViODRmOTVhMmY1Njk0OGRkODc5ZDcxIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJyb290QHVuaS5jbG91ZCIsImZpcnN0X25hbWUiOiJSb290IiwibGFzdF9uYW1lIjoiVXNlciBVbmkuQ2xvdWQiLCJpc19zdXBlcnVzZXIiOnRydWUsImlzX3N0YWZmIjp0cnVlLCJlbWFpbCI6InJvb3RAdW5pLmNsb3VkIn0.bjye4P5HFudFaMtDAhl0QLV3xtP0zup4v805gdJ4rro
+
+{
+}
+###
+
+POST http://127.0.0.1:8000/invite-user/ HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYxOTYzMjI2LCJpYXQiOjE2NjE5NTk2MjYsImp0aSI6ImE5ZTUwODU4NzIyMTRmMmM4M2QwNGJhNTIyMWY1ZGFjIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJyb290QHVuaS5jbG91ZCIsImZpcnN0X25hbWUiOiJSb290IiwibGFzdF9uYW1lIjoiVXNlciBVbmkuQ2xvdWQiLCJpc19zdXBlcnVzZXIiOnRydWUsImlzX3N0YWZmIjp0cnVlLCJlbWFpbCI6InJvb3RAdW5pLmNsb3VkIn0.jrInpSVQNlmEyl6El1ZhaOkrMuZi5qQDLSA7z4MBKf8
+
+{
+    "email": "felipegatefy+6@gmail.com"
+}
+###

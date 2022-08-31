@@ -252,7 +252,6 @@ class InviteUsersViewSet(viewsets.ViewSet):
 
     def retrieve(self, request):
         try:
-            logger.info(request.user.id)
             organization = UserCustomer.objects.get(user_id=request.user.id)
             invitations = InvitedUser.objects.filter(customer_id=organization.customer_id)
             for invite in invitations:
@@ -261,11 +260,9 @@ class InviteUsersViewSet(viewsets.ViewSet):
                 date_expires = datetime.datetime.strptime(date_expires, '%Y-%m-%d %H:%M:%S')
                 now = timezone.make_naive(timezone.now())
 
-                if date_expires < now:
-                    logger.info('pending')
+                if date_expires > now:
                     invite.status = 'pending'
                 else:
-                    logger.info('expired')
                     invite.status = 'expired'
             serializar = InvitedUserListSerializer(invitations, many=True)
             return Response(serializar.data)
