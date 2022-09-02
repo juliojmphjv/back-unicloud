@@ -1,3 +1,6 @@
+from operator import mod
+from pyexpat import model
+from unicodedata import name
 from django.db import models
 from unicloud_customers.models import Customer
 from django.contrib.auth.models import User
@@ -30,3 +33,8 @@ class SalesRelatioshipFlow(models.Model):
 
     def natural_key(self):
         return (self.author.username)
+
+class SubscriptionsModel(models.Model):
+    name = models.CharField(max_length=100)
+    months = models.IntegerField()
+    discount = models.FloatField()
