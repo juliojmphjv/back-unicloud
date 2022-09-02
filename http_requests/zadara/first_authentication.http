@@ -1,0 +1,27 @@
+POST https://br01-console.uni.cloud/api/v2/identity/auth HTTP/1.1
+content-type: application/json
+
+{
+    "auth": {
+        "identity": {
+            "methods": [
+                "password"
+            ],
+            "password": {
+                "user": {
+                    "name": "unicloud.broker",
+                    "password": "1234@UniIT",
+                    "domain": {
+                        "name": "cloud_msp"
+                    }
+                }
+            }
+        },
+        "scope": {
+            "domain": {
+                "name": "cloud_msp"
+            }
+        }
+    }
+}
+###
