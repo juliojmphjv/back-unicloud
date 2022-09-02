@@ -1,4 +1,6 @@
-from unicloud_sales.models import Opportunity, SalesRelatioshipFlow, ResourceOfOpportunity
+from re import T
+from unicodedata import name
+from unicloud_sales.models import Opportunity, SalesRelatioshipFlow, ResourceOfOpportunity, SubscriptionsModel
 from rest_framework import viewsets
 from unicloud_customers.customer_permissions import IsPartner, IsRoot
 from unicloud_customers.models import Customer, UserCustomer
@@ -7,7 +9,7 @@ from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from logs.setup_log import logger
 from unicloud_customers.customers import CustomerObject
-from .serializers import OpportunitySerializer, OneOpportunitySerializer, ComputeQuotationSerializer, HistorySerializer
+from .serializers import OpportunitySerializer, OneOpportunitySerializer, ComputeQuotationSerializer, HistorySerializer, SubscriptionSerializer
 from django.core import serializers
 from error_messages import messages
 from unicloud_customers.receita_federal import ConsultaReceita
@@ -209,3 +211,62 @@ class CalculatorView(viewsets.ViewSet):
             if 'object_storage' in request.data['storage']:
                 obj_storage_quotation = Calculator().calc_object_storage(request.data['storage']['object_storage'])
                 logger.info(round(obj_storage_quotation, 2))
+
+class Subscriptions(viewsets.ViewSet):
+
+    def create(self, request):
+        
+        try:
+            subscription = SubscriptionsModel.objects.get(name=request.data['name'])
+            logger.info('has!')
+            return Response(messages.subscription_already_exists, 409)
+        except SubscriptionsModel.DoesNotExist:
+            logger.info("dont exists")
+            new_subscription = SubscriptionsModel.objects.create(name=request.data['name'], months=request.data['months'], discount=request.data['discount'])
+            new_subscription.save()
+            logger.info("created")
+            serializer = SubscriptionSerializer(new_subscription)
+            logger.info("serialized")
+            return Response(serializer.data)
+
+
+    def update(self, request):
+        logger.info(request.data)
+        try:
+            subscriptions = SubscriptionsModel.objects.get(id=request.data['subscription_id'])
+            logger.info(subscriptions)
+            if 'new_name' in request.data.keys():
+                subscriptions.name = request.data['new_name']
+            if 'new_months_value' in request.data.keys():
+                subscriptions.months = request.data['new_months_value']
+                
+            if 'new_discount_value' in request.data.keys():
+                subscriptions.discount = request.data['new_discount_value']
+            
+            subscriptions.save()
+            logger.info(subscriptions)
+            serializer = SubscriptionSerializer(subscriptions)
+            return Response(serializer.data)
+
+        except SubscriptionsModel.DoesNotExist:
+            return Response(messages.subscription_doesnt_existis)
+
+        except Exception as error:
+            logger.error(error)
+
+        
+
+    def retrieve(self, request):
+        subscriptions = SubscriptionsModel.objects.all()
+        serializer = SubscriptionSerializer(subscriptions, many=True)
+        return Response(serializer.data)
+
+    def delete(self, request):
+        try:
+            subscription = SubscriptionsModel.objects.get(id=request.data['subscription_id'])
+            subscription.delete()
+            return Response(messages.deleted, 200)
+        except SubscriptionsModel.DoesNotExist:
+            return Response(messages.subscription_doesnt_existis, 404)
+        except Exception as error:
+            logger.error(error)

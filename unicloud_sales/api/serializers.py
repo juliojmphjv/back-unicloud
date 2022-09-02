@@ -39,3 +39,9 @@ class ComputeQuotationSerializer(serializers.Serializer):
     informal = serializers.FloatField()
     eleven_month_agreement = serializers.FloatField()
     thirtysix_month_agreement = serializers.FloatField()
+
+class SubscriptionSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField(max_length=100)
+    months = serializers.IntegerField()
+    discount = serializers.IntegerField()

@@ -1,0 +1,38 @@
+POST http://127.0.0.1:8000/root/subscriptions/ HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYyMDY3MTk2LCJpYXQiOjE2NjIwNjM1OTYsImp0aSI6IjIzY2M1NzY3N2FkNTQwMGQ4ZDk2ZWRjMjAzNzMzNTdmIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJyb290QHVuaS5jbG91ZCIsImZpcnN0X25hbWUiOiJSb290IiwibGFzdF9uYW1lIjoiVXNlciBVbmkuQ2xvdWQiLCJpc19zdXBlcnVzZXIiOnRydWUsImlzX3N0YWZmIjp0cnVlLCJlbWFpbCI6InJvb3RAdW5pLmNsb3VkIn0.uysotV5JNvE-p2sjppxuOmwUW7CBnXHOKw_y8y1rXKE
+
+{
+    "name": "One-Year",
+    "months": 12,
+    "discount": 25
+}
+###
+
+GET http://127.0.0.1:8000/root/subscriptions/ HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYyMTMzMTA2LCJpYXQiOjE2NjIxMjk1MDYsImp0aSI6IjQwZjIzZDY4YjFjNzRlYmQ5ODY0OWVkNzVkN2IxZjgxIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJyb290QHVuaS5jbG91ZCIsImZpcnN0X25hbWUiOiJSb290IiwibGFzdF9uYW1lIjoiVXNlciBVbmkuQ2xvdWQiLCJpc19zdXBlcnVzZXIiOnRydWUsImlzX3N0YWZmIjp0cnVlLCJlbWFpbCI6InJvb3RAdW5pLmNsb3VkIn0.zfG0oi8Cp-wsIegQ8yu3upX-QCtVX_w-jYkbk7_rOs8
+
+{
+}
+###
+
+PATCH http://127.0.0.1:8000/root/subscriptions/ HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYyMTMzMTA2LCJpYXQiOjE2NjIxMjk1MDYsImp0aSI6IjQwZjIzZDY4YjFjNzRlYmQ5ODY0OWVkNzVkN2IxZjgxIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJyb290QHVuaS5jbG91ZCIsImZpcnN0X25hbWUiOiJSb290IiwibGFzdF9uYW1lIjoiVXNlciBVbmkuQ2xvdWQiLCJpc19zdXBlcnVzZXIiOnRydWUsImlzX3N0YWZmIjp0cnVlLCJlbWFpbCI6InJvb3RAdW5pLmNsb3VkIn0.zfG0oi8Cp-wsIegQ8yu3upX-QCtVX_w-jYkbk7_rOs8
+
+{
+    "new_name": "Three-Year-Subs",
+    "subscription_id": 2,
+    "new_months_value": 36,
+    "new_discount_value": 70
+}
+
+###
+DELETE http://127.0.0.1:8000/root/subscriptions/ HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYyMTMzMTA2LCJpYXQiOjE2NjIxMjk1MDYsImp0aSI6IjQwZjIzZDY4YjFjNzRlYmQ5ODY0OWVkNzVkN2IxZjgxIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJyb290QHVuaS5jbG91ZCIsImZpcnN0X25hbWUiOiJSb290IiwibGFzdF9uYW1lIjoiVXNlciBVbmkuQ2xvdWQiLCJpc19zdXBlcnVzZXIiOnRydWUsImlzX3N0YWZmIjp0cnVlLCJlbWFpbCI6InJvb3RAdW5pLmNsb3VkIn0.zfG0oi8Cp-wsIegQ8yu3upX-QCtVX_w-jYkbk7_rOs8
+
+{
+    "subscription_id": 1
+}

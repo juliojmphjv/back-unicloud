@@ -222,3 +222,35 @@ cnpj_error = {
         ]
     }
 }
+
+subscription_already_exists = {
+    'data': {
+        "detail": "Already exists subscription with this name.",
+        'code': 'subscription_exists',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'Already exists subscription with this name.',
+            }
+        ]
+    }
+}
+
+subscription_doesnt_existis = {
+    'data': {
+        "detail": "Subscription does not exists.",
+        'code': 'subscription_doesnt_exists',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'Subscription does not exists.',
+            }
+        ]
+    }
+}
+
+deleted = {
+    'data': 'deleted'
+}
