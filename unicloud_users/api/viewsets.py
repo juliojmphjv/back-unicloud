@@ -195,7 +195,7 @@ class MenuViewSet(viewsets.ViewSet):
         try:
             organization = CustomerObject(request)
             if organization.get_customer_object().type == 'root':
-                user_menu = {'menu': [*menu_object['common'], *menu_object['root']]}
+                user_menu = {'menu': [*menu_object['common'], *menu_object['root'], *menu_object['customer']]}
                 serializer = MenuSerializer(user_menu)
                 return Response(serializer.data)
             elif organization.get_customer_object().type == 'partner':
