@@ -251,6 +251,20 @@ subscription_doesnt_existis = {
     }
 }
 
+already_existis_subscription_whith_this_name = {
+    'data': {
+        "detail": "Already existis subscription whith this name.",
+        'code': 'already_exists_this_name',
+        'messages': [
+            {
+                'token_class': 'AccessToken',
+                'token_type': 'access',
+                'message': 'Already existis subscription whith this name.',
+            }
+        ]
+    }
+}
+
 deleted = {
     'data': 'deleted'
 }
