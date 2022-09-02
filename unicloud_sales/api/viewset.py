@@ -236,7 +236,11 @@ class Subscriptions(viewsets.ViewSet):
             subscriptions = SubscriptionsModel.objects.get(id=request.data['subscription_id'])
             logger.info(subscriptions)
             if 'new_name' in request.data.keys():
-                subscriptions.name = request.data['new_name']
+                already_had_this_name = SubscriptionsModel.objects.filter(name=request.data['new_name']).exists()
+                if already_had_this_name:
+                    return Response(messages.already_existis_subscription_whith_this_name, 409)
+                else:
+                    subscriptions.name = request.data['new_name']
             if 'new_months_value' in request.data.keys():
                 subscriptions.months = request.data['new_months_value']
                 
