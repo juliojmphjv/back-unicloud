@@ -1,6 +1,6 @@
 from re import T
 from unicodedata import name
-from unicloud_sales.models import Opportunity, SalesRelatioshipFlow, ResourceOfOpportunity, SubscriptionsModel
+from unicloud_sales.models import Opportunity, SalesRelatioshipFlow, ResourceOfOpportunity, SubscriptionsModel, CurrencyModel
 from rest_framework import viewsets
 from unicloud_customers.customer_permissions import IsPartner, IsRoot
 from unicloud_customers.models import Customer, UserCustomer
@@ -9,7 +9,7 @@ from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from logs.setup_log import logger
 from unicloud_customers.customers import CustomerObject
-from .serializers import OpportunitySerializer, OneOpportunitySerializer, ComputeQuotationSerializer, HistorySerializer, SubscriptionSerializer
+from .serializers import OpportunitySerializer, OneOpportunitySerializer, ComputeQuotationSerializer, HistorySerializer, SubscriptionSerializer, CurrencySerializer
 from django.core import serializers
 from error_messages import messages
 from unicloud_customers.receita_federal import ConsultaReceita
@@ -192,7 +192,7 @@ class OpportunityStatus(viewsets.ViewSet):
             return Response({'error': error})
 
 class CalculatorView(viewsets.ViewSet):
-    # permission_classes = (IsRoot, )
+    permission_classes = (IsRoot, )
 
     def calc(self, request):
         if 'compute' in request.data.keys():
@@ -213,6 +213,7 @@ class CalculatorView(viewsets.ViewSet):
                 logger.info(round(obj_storage_quotation, 2))
 
 class Subscriptions(viewsets.ViewSet):
+    permission_classes = (IsRoot, )
 
     def create(self, request):
         
@@ -272,5 +273,60 @@ class Subscriptions(viewsets.ViewSet):
             return Response(messages.deleted, 200)
         except SubscriptionsModel.DoesNotExist:
             return Response(messages.subscription_doesnt_existis, 404)
+        except Exception as error:
+            logger.error(error)
+
+class Measure(viewsets.ViewSet):
+    permission_classes = (IsRoot, )
+
+    def set_values(self, request):
+        pass
+
+class Currency(viewsets.ViewSet):
+    permission_classes = (IsRoot, )
+
+    def set_currency(self, request):
+        try:
+            currency = CurrencyModel.objects.get(currency=request.data['currency'])
+            logger.info('has!')
+            if 'currency_name' in request.data.keys():
+                currency.currency = request.data['currency_name']
+            if 'unicloud_dollar' in request.data.keys():
+                currency.unicloud_dollar = request.data['unicloud_dollar']
+            if 'safety_margin' in request.data.keys():
+                currency.safety_margin = request.data['safety_margin']
+
+            currency.save()
+            serializer = CurrencySerializer(currency)
+            return Response(serializer.data)
+
+        except CurrencyModel.DoesNotExist:
+            logger.info("dont exists")
+            try:
+                new_currency = CurrencyModel.objects.create(currency=request.data['currency'], unicloud_dollar=request.data['unicloud_dollar'], safety_margin=request.data['safety_margin'])
+                new_currency.save()
+            except Exception as error:
+                logger.error(error)
+            logger.info("created")
+            serializer = CurrencySerializer(new_currency)
+            logger.info("serialized")
+            return Response(serializer.data)
+
+        except Exception as error:
+            logger.error(error)
+
+    def retrieve(self, request):
+        try:
+            currencies = CurrencyModel.objects.all()
+            serializer = CurrencySerializer(currencies, many=True)
+            return Response(serializer.data)
+        except Exception as error:
+            return Response({"Error": "Error"})
+
+    def delete(self, request):
+        try:
+            currency = CurrencyModel.objects.get(id=request.data['currency_id'])
+            currency.delete()
+            return Response(messages.deleted, 200)
         except Exception as error:
             logger.error(error)

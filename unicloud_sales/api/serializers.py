@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.core.serializers.json import Serializer
 from django.db.models import Manager
 from logs.setup_log import logger
+from decimal import Decimal
 
 class ResourcesSerializer(serializers.Serializer):
     resource_name = serializers.CharField(max_length=150)
@@ -45,3 +46,9 @@ class SubscriptionSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     months = serializers.IntegerField()
     discount = serializers.IntegerField()
+
+class CurrencySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    currency = serializers.CharField(max_length=5)
+    unicloud_dollar = serializers.DecimalField(default=0, max_digits=6, decimal_places=2)
+    safety_margin = serializers.DecimalField(max_digits=3, decimal_places=0, default=Decimal(0))
