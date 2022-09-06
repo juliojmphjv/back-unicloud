@@ -48,5 +48,5 @@ class MeasureModel(models.Model):
 PERCENTAGE_VALIDATOR = [MinValueValidator(0), MaxValueValidator(100)]    
 class CurrencyModel(models.Model):
     currency = models.CharField(max_length=5, default='usd')
-    unicloud_dollar = models.DecimalField(default=0, max_digits=6, decimal_places=2)
+    unicloud_currency = models.DecimalField(default=0, max_digits=6, decimal_places=2)
     safety_margin = models.DecimalField(max_digits=3, decimal_places=0, default=Decimal(0), validators=PERCENTAGE_VALIDATOR)

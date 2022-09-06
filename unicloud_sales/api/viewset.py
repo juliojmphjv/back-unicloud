@@ -15,6 +15,7 @@ from error_messages import messages
 from unicloud_customers.receita_federal import ConsultaReceita
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 from ..calculator_tool import Calculator
+import requests
 
 class OpportunityRegister(viewsets.ViewSet):
     permission_classes = (IsPartner,)
@@ -318,6 +319,17 @@ class Currency(viewsets.ViewSet):
     def retrieve(self, request):
         try:
             currencies = CurrencyModel.objects.all()
+            for currency in currencies:
+                if currency.currency == 'usd':
+                    req = requests.get("https://economia.awesomeapi.com.br/all/USD-BRL")
+                    quotation = req.json()
+                    currency.ptax = quotation["USD"]["bid"]
+                    currency.overpriced_unicloud_currency =  currency.unicloud_currency+((currency.unicloud_currency/100)*15)
+                else:
+                    currency.ptax = 0
+                    currency.overpriced_unicloud_currency = 0
+
+
             serializer = CurrencySerializer(currencies, many=True)
             return Response(serializer.data)
         except Exception as error:
