@@ -5,6 +5,8 @@ from django.db import models
 from unicloud_customers.models import Customer
 from django.contrib.auth.models import User
 from unicloud_resources.models import Resource
+from django.core.validators import MinValueValidator, MaxValueValidator
+from decimal import Decimal
 
 # Create your models here.
 class Opportunity(models.Model):
@@ -38,3 +40,13 @@ class SubscriptionsModel(models.Model):
     name = models.CharField(max_length=100)
     months = models.IntegerField()
     discount = models.FloatField()
+
+class MeasureModel(models.Model):
+    name = models.CharField(max_length=50)
+    code = models.CharField(max_length=10)
+    
+PERCENTAGE_VALIDATOR = [MinValueValidator(0), MaxValueValidator(100)]    
+class CurrencyModel(models.Model):
+    currency = models.CharField(max_length=5, default='usd')
+    unicloud_dollar = models.DecimalField(default=0, max_digits=6, decimal_places=2)
+    safety_margin = models.DecimalField(max_digits=3, decimal_places=0, default=Decimal(0), validators=PERCENTAGE_VALIDATOR)
