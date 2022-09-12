@@ -54,3 +54,9 @@ class CurrencySerializer(serializers.Serializer):
     safety_margin = serializers.DecimalField(max_digits=3, decimal_places=0, default=Decimal(0))
     ptax = serializers.FloatField()
     overpriced_unicloud_currency = serializers.DecimalField(default=0, max_digits=6, decimal_places=2)
+
+class SetCurrencySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    currency = serializers.CharField(max_length=5)
+    unicloud_currency = serializers.DecimalField(default=0, max_digits=6, decimal_places=2)
+    safety_margin = serializers.DecimalField(max_digits=3, decimal_places=0, default=Decimal(0))

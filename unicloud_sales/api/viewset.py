@@ -9,7 +9,7 @@ from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from logs.setup_log import logger
 from unicloud_customers.customers import CustomerObject
-from .serializers import OpportunitySerializer, OneOpportunitySerializer, ComputeQuotationSerializer, HistorySerializer, SubscriptionSerializer, CurrencySerializer
+from .serializers import OpportunitySerializer, OneOpportunitySerializer, ComputeQuotationSerializer, HistorySerializer, SubscriptionSerializer, CurrencySerializer, SetCurrencySerializer
 from django.core import serializers
 from error_messages import messages
 from unicloud_customers.receita_federal import ConsultaReceita
@@ -289,16 +289,15 @@ class Currency(viewsets.ViewSet):
     def set_currency(self, request):
         try:
             currency = CurrencyModel.objects.get(currency=request.data['currency'])
-            logger.info('has!')
             if 'currency_name' in request.data.keys():
                 currency.currency = request.data['currency_name']
             if 'unicloud_dollar' in request.data.keys():
-                currency.unicloud_dollar = request.data['unicloud_dollar']
+                currency.unicloud_dollar = request.data['unicloud_currency']
             if 'safety_margin' in request.data.keys():
                 currency.safety_margin = request.data['safety_margin']
 
             currency.save()
-            serializer = CurrencySerializer(currency)
+            serializer = SetCurrencySerializer(currency)
             return Response(serializer.data)
 
         except CurrencyModel.DoesNotExist:
@@ -309,7 +308,7 @@ class Currency(viewsets.ViewSet):
             except Exception as error:
                 logger.error(error)
             logger.info("created")
-            serializer = CurrencySerializer(new_currency)
+            serializer = SetCurrencySerializer(new_currency)
             logger.info("serialized")
             return Response(serializer.data)
 
