@@ -303,7 +303,7 @@ class Currency(viewsets.ViewSet):
         except CurrencyModel.DoesNotExist:
             logger.info("dont exists")
             try:
-                new_currency = CurrencyModel.objects.create(currency=request.data['currency'], unicloud_dollar=request.data['unicloud_dollar'], safety_margin=request.data['safety_margin'])
+                new_currency = CurrencyModel.objects.create(currency=request.data['currency'], unicloud_currency=request.data['unicloud_currency'], safety_margin=request.data['safety_margin'])
                 new_currency.save()
             except Exception as error:
                 logger.error(error)
