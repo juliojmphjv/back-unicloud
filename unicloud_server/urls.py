@@ -65,9 +65,7 @@ urlpatterns = [
     path('opportunity-register/', OpportunityRegister.as_view({'post': 'create', 'get': 'retrieve'})),
     path('user-preferences/', UserPreference.as_view({'post': 'create', 'get': 'retrieve'})),
 
-
-
-
+ 
     #Root Routes.
     path('root/', include('unicloud_server.root_urls')),
 

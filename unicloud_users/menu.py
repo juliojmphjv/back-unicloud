@@ -34,11 +34,6 @@ menu_object = {
             ]
         },
         {
-            "icon": "wpf:business-contact",
-            "text": "partners",
-            "link": "/customers/"
-        },
-        {
             "icon": 'fluent:money-calculator-20-regular',
             "text": 'financial',
             "subMenu": [
@@ -52,23 +47,23 @@ menu_object = {
     ],
     "partner": [
         {
-            "icon": 'cil:chart-line',
-            "text": 'sales',
+            "icon": "cil:chart-line",
+            "text": "sales",
             "subMenu": [
                 {
-                    "icon": 'wpf:business-contact',
-                    "text": 'partners',
-                    "link": '/customers'
+                    "icon": "wpf:business-contact",
+                    "text": "partners",
+                    "link": "/customers"
                 },
                 {
-                    "icon": 'carbon:result-new',
-                    "text": 'opportunities',
-                    "link": '/requests'
+                    "icon": "carbon:result-new",
+                    "text": "opportunities",
+                    "link": "/requests"
                 },
                 {
-                    "icon": 'fluent:calculator-20-regular',
-                    "text": 'calculator',
-                    "link": '/calculator'
+                    "icon": "fluent:calculator-20-regular",
+                    "text": "calculator",
+                    "link": "/calculator"
                 }
             ]
         },
@@ -116,10 +111,5 @@ menu_object = {
                 }
             ]
         },
-        {
-            "icon": 'ph:users-three-thin',
-            "text": 'users',
-            "link": '/user-list-default'
-        }
     ]
 }
