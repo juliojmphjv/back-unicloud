@@ -20,16 +20,6 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Set up Environment for Development
-        if: ${{ github.ref == 'refs/heads/development' }}
-        run: |
-          echo "ENVIRONMENT=Development" >> $GITHUB_ENV
-      
-      - name: Set up Environment for Production
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: |
-          echo "ENVIRONMENT=Production" >> $GITHUB_ENV
-      
       # - uses: sonarsource/sonarqube-scan-action@master
       #   env:
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -64,11 +54,12 @@ jobs:
             . 
             !venv/
 
-  deploy:
+  deploy-development:
+    if: ${{ github.ref == 'refs/heads/development' }}
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: ${{ env.ENVIRONMENT }}
+      name: Development
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
@@ -78,20 +69,33 @@ jobs:
           name: python-app
           path: .
           
-      - name: 'Deploy to Azure Web App Development'
-        if: ${{ github.ref == 'refs/heads/development' }}
+      - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
           app-name: 'unicloud-back-development'
-          slot-name: ${{ env.ENVIRONMENT }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5B8643AF39CE4938A5C01C73A02EBD1D }}
-      
+
+  deploy-production:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: Production
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: python-app
+          path: .
+          
       - name: 'Deploy to Azure Web App Production'
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
           app-name: 'unicloudbr'
-          slot-name: ${{ env.ENVIRONMENT }}
+          slot-name: Production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7165466A93794BFDBBE5DE461802CC1A }}
